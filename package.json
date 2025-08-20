@@ -1,0 +1,21 @@
+{
+  "name": "giveaway-dashboard",
+  "version": "1.0.0",
+  "description": "Joel's Giveaway System – powered by Next.js and Turso",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.1.0",
+    "uuid": "^9.0.0",
+    "next": "^13.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {},
+  "keywords": ["nextjs", "giveaway", "dashboard", "turso", "vercel"],
+  "author": "Joel",
+  "license": "MIT"
+}
