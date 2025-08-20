@@ -1,10 +1,10 @@
 [build]
   publish = "public"
   functions = "netlify/functions"
-  command = "npm install && npm run build"
+  command = "npm run build"
 
 [dev]
-  command = "npm run dev"
+  command = "npm run start"
   port = 8888
   targetPort = 3000
   autoLaunch = true
