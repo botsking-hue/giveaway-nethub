@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "pages/api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "admin096-dashboard/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/pages/api/$1.js"
+    },
+    {
+      "src": "/admin096-dashboard",
+      "dest": "/admin096-dashboard/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ]
+}
