@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joel's Giveaway Admin Panel</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00FF00;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #00FF00;
+    }
+    input, textarea, select {
+      background-color: #111;
+      color: #00FF00;
+      border: 1px solid #00FF00;
+      padding: 8px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    button {
+      background-color: #00FF00;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+    }
+    .section {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🟩 Joel's Giveaway Admin Panel</h1>
+
+  <!-- Login Panel -->
+  <div class="section" id="loginPanel">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="adminUsername" placeholder="Username" />
+    <input type="password" id="adminPassword" placeholder="Password" />
+    <button onclick="loginAdmin()">Login</button>
+  </div>
+
+  <!-- Create Giveaway Section -->
+  <div class="section" id="createGiveaway" style="display:none;">
+    <h2>🎁 Create New Giveaway</h2>
+    <form id="giveawayForm">
+      <input type="text" id="title" placeholder="What are you giving away?" required />
+      <textarea id="description" placeholder="Giveaway details..." required></textarea>
+      <select id="type" required>
+        <option value="">Select competition type</option>
+        <option value="first-come">First-Come Winners</option>
+        <option value="random">Random Selection</option>
+      </select>
+      <textarea id="requirements" placeholder="Required info from participants" required></textarea>
+      <input type="datetime-local" id="deadline" required />
+      <input type="number" id="winners" placeholder="Number of winners" min="1" required />
+      <button type="submit">🚀 Launch Giveaway</button>
+    </form>
+  </div>
+
+  <script>
+    function loginAdmin() {
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+      // Simple mock login (replace with real auth)
+      if (username === "assmin" && password === "assmin") {
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('createGiveaway').style.display = 'block';
+      } else {
+        alert("Invalid credentials");
+      }
+    }
+
+    document.getElementById('giveawayForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        type: document.getElementById('type').value,
+        requirements: document.getElementById('requirements').value,
+        deadline: document.getElementById('deadline').value,
+        winners: document.getElementById('winners').value
+      };
+
+      const res = await fetch('/api/createGiveaway', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.message || "Giveaway created!");
+    });
+  </script>
+
+</body>
+</html>
