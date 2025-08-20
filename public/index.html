@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joel's Giveaways 🇰🇪</title>
+  <link rel="stylesheet" href="matrix.css" />
+  <style>
+    body {
+      background-color: #000;
+      color: #00FF00;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #00FF00;
+    }
+    .box {
+      border: 1px solid #00FF00;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px #00FF00;
+    }
+    input, textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #111;
+      color: #00FF00;
+      border: 1px solid #00FF00;
+    }
+    button {
+      background-color: #00FF00;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00FF00;
+    }
+    a {
+      color: #00FF00;
+      text-decoration: underline;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 Joel's Giveaways 🇰🇪</h1>
+
+    <!-- Active Giveaway -->
+    <div class="box" id="activeGiveaway" style="display: none;">
+      <h2>🔥 Current Giveaway</h2>
+      <p><strong>Prize:</strong> Samsung Galaxy A14 📱</p>
+      <p><strong>Deadline:</strong> 25th August, 11:59 PM</p>
+      <p><strong>Type:</strong> Random Selection</p>
+      <p><strong>Requirements:</strong> Name, Telegram Handle, Phone Number</p>
+
+      <form id="entryForm">
+        <input type="text" placeholder="Your Name" required />
+        <input type="text" placeholder="Telegram Handle" required />
+        <input type="text" placeholder="Phone Number" required />
+        <button type="submit">🚀 Enter Giveaway</button>
+      </form>
+    </div>
+
+    <!-- No Giveaway -->
+    <div class="box" id="noGiveaway" style="display: none;">
+      <h2>😢 No Active Giveaway</h2>
+      <p>Stay tuned for the next drop! We announce all updates on our WhatsApp channel 👇</p>
+      <p><a href="https://chat.whatsapp.com/BuWxeKRgreL7OIV6MumTng?mode=ac_t" target="_blank">Join Joel's Giveaway Channel 💬</a></p>
+    </div>
+
+    <!-- Past Winners -->
+    <div class="box">
+      <h2>🏆 Past Winners</h2>
+      <ul>
+        <li><strong>@mkenya254</strong> won a JBL Bluetooth Speaker 🔊</li>
+        <li><strong>@nairobi_gamer</strong> won a Ksh 2,000 M-Pesa voucher 💸</li>
+        <li><strong>@shiro_ke</strong> won a branded hoodie 🧥</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Simulate giveaway status
+    const isGiveawayActive = true; // Change to false to test inactive view
+
+    document.getElementById('activeGiveaway').style.display = isGiveawayActive ? 'block' : 'none';
+    document.getElementById('noGiveaway').style.display = isGiveawayActive ? 'none' : 'block';
+
+    document.getElementById('entryForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert("✅ Entry submitted! Good luck!");
+    });
+  </script>
+</body>
+  </html>
