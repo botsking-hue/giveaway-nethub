@@ -1,10 +1,9 @@
 {
-  "name": "giveaway-dashboard",
+  "name": "giveaway-nethub",
   "version": "1.0.0",
-  "description": "Joel's Giveaway System – Static frontend + Netlify Functions backend",
+  "description": "Static giveaway dashboard with Netlify Functions and Turso backend",
   "scripts": {
-    "dev": "netlify dev",
-    "build": "echo 'No build step required for static site'",
+    "build": "echo 'No build step required'",
     "start": "netlify dev"
   },
   "dependencies": {
@@ -12,7 +11,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {},
-  "keywords": ["giveaway", "netlify", "turso", "kenya", "dashboard"],
+  "keywords": ["giveaway", "netlify", "turso", "dashboard", "kenya"],
   "author": "Joel",
   "license": "MIT"
 }
