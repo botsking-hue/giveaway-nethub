@@ -1,0 +1,35 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm install && npm run build"
+
+[dev]
+  command = "npm run dev"
+  port = 8888
+  targetPort = 3000
+  autoLaunch = true
+
+[[redirects]]
+  from = "/api/createGiveaway"
+  to = "/.netlify/functions/createGiveaway"
+  status = 200
+
+[[redirects]]
+  from = "/api/getEntries"
+  to = "/.netlify/functions/getEntries"
+  status = 200
+
+[[redirects]]
+  from = "/api/pickWinners"
+  to = "/.netlify/functions/pickWinners"
+  status = 200
+
+[[redirects]]
+  from = "/admin096-dashboard"
+  to = "/admin096-dashboard/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
