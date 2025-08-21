@@ -1,42 +1,43 @@
-export async function handler(event) {
+const fs = require('fs');
+const path = require('path');
+
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' })
-    };
-  }
-
-  const entry = JSON.parse(event.body);
-
-  // Basic validation
-  if (!entry.name || !entry.telegram_handle || !entry.phone || !entry.giveaway_id) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields' })
+      body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
 
   try {
-    const response = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-      },
-      body: JSON.stringify(entry)
+    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
+    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
+    
+    const newEntry = JSON.parse(event.body);
+    const entryId = `entry-${Date.now()}`;
+    
+    // Add new entry
+    entries.push({
+      ...newEntry,
+      id: entryId,
+      createdAt: new Date().toISOString(),
     });
 
-    const result = await response.json();
+    // Write back to file
+    fs.writeFileSync(entriesPath, JSON.stringify(entries, null, 2));
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Entry created successfully', id: result.id })
+      body: JSON.stringify({ 
+        success: true, 
+        id: entryId,
+        message: 'Entry created successfully' 
+      }),
     };
   } catch (error) {
-    console.error('Error creating entry:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal server error' })
+      body: JSON.stringify({ error: error.message }),
     };
   }
-}
+};
