@@ -11,7 +11,14 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {},
-  "keywords": ["netlify", "giveaway", "blobs", "matrix"],
+  "keywords": [
+    "netlify",
+    "giveaway",
+    "blobs",
+    "matrix",
+    "static-site",
+    "serverless"
+  ],
   "author": "Joel",
   "license": "MIT"
 }
