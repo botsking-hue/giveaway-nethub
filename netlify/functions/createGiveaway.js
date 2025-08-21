@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '../../lib/db'; // Your DB connection logic
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+export async function handler(event) {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: 'Method not allowed' })
+    };
   }
 
   const {
@@ -13,38 +15,51 @@ export default async function handler(req, res) {
     requirements,
     deadline,
     winners
-  } = req.body;
+  } = JSON.parse(event.body);
 
-  // Basic validation
   if (!title || !type || !deadline || !winners) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Missing required fields' })
+    };
   }
+
+  const id = uuidv4();
+  const created_at = new Date().toISOString();
+
+  const giveaway = {
+    id,
+    title,
+    description: description || '',
+    type,
+    requirements: requirements || '',
+    deadline,
+    max_winners: parseInt(winners),
+    status: 'active',
+    created_at
+  };
 
   try {
-    const id = uuidv4();
-    const created_at = new Date().toISOString();
+    const response = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/giveaways`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+      },
+      body: JSON.stringify(giveaway)
+    });
 
-    // Insert into database
-    await db.run(
-      `INSERT INTO giveaways (
-        id, title, description, type, requirements, deadline, max_winners, status, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id,
-        title,
-        description || '',
-        type,
-        requirements || '',
-        deadline,
-        parseInt(winners),
-        'active',
-        created_at
-      ]
-    );
+    const result = await response.json();
 
-    return res.status(200).json({ message: 'Giveaway created successfully', id });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Giveaway created successfully', id: result.id })
+    };
   } catch (error) {
-    console.error('Error creating giveaway:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Error saving to Netlify Blobs:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal server error' })
+    };
   }
-      }
+    }
