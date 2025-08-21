@@ -1,211 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Joel's Giveaways 🇰🇪</title>
-  <link rel="stylesheet" href="styles/matrix.css" />
-  <style>
-    body {
-      background-color: #000;
-      color: #00FF00;
-      font-family: 'Courier New', monospace;
-      padding: 20px;
-    }
-    .container {
-      max-width: 700px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 20px;
-      text-shadow: 0 0 5px #00FF00;
-    }
-    .box {
-      border: 1px solid #00FF00;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 10px #00FF00;
-    }
-    input {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      background-color: #111;
-      color: #00FF00;
-      border: 1px solid #00FF00;
-    }
-    button {
-      background-color: #00FF00;
-      color: #000;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 10px #00FF00;
-    }
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-    li {
-      margin-bottom: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway Hub - Win Amazing Prizes!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🎉 Joel's Giveaways 🇰🇪</h1>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Giveaway<span>Hub</span></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#giveaways">Giveaways</a></li>
+                    <li><a href="#winners">Winners</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="/admin096-dashboard" class="admin-btn">Admin</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-    <div class="box" id="activeGiveaway" style="display: none;">
-      <h2>🔥 Current Giveaway</h2>
-      <p><strong>Prize:</strong> <span id="prize"></span></p>
-      <p><strong>Deadline:</strong> <span id="deadline"></span></p>
-      <p><strong>Type:</strong> <span id="type"></span></p>
-      <p><strong>Requirements:</strong> WhatsApp Number</p>
-      <p id="countdown"></p>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Win Amazing Prizes!</h2>
+                <p>Enter our giveaways for a chance to win incredible prizes. New contests added regularly!</p>
+                <a href="#giveaways" class="btn">View Giveaways</a>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" alt="Giveaway Prizes">
+            </div>
+        </div>
+    </section>
 
-      <form id="entryForm">
-        <input type="text" name="name" placeholder="Your Name" required />
-        <input type="text" name="telegram_handle" placeholder="Telegram Handle" required />
-        <input type="text" name="phone" placeholder="WhatsApp Number" required />
-        <button type="submit">🚀 Enter Giveaway</button>
-      </form>
+    <!-- Giveaways Section -->
+    <section id="giveaways" class="giveaways">
+        <div class="container">
+            <h2 class="section-title">Current Giveaways</h2>
+            <div class="giveaways-grid" id="giveaways-container">
+                <!-- Giveaways will be loaded dynamically -->
+                <div class="loading">Loading giveaways...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Entry Modal -->
+    <div id="entry-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Enter Giveaway</h2>
+            <form id="entry-form">
+                <input type="hidden" id="giveaway-id">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <button type="submit" class="btn">Submit Entry</button>
+            </form>
+        </div>
     </div>
 
-    <div class="box" id="noGiveaway" style="display: none;">
-      <h2>😢 No Active Giveaway</h2>
-      <p>Stay tuned for the next drop! Join our WhatsApp channel 👇</p>
-      <p><a href="https://chat.whatsapp.com/BuWxeKRgreL7OIV6MumTng?mode=ac_t" target="_blank">Joel's Giveaway Channel 💬</a></p>
-    </div>
+    <!-- Winners Section -->
+    <section id="winners" class="winners">
+        <div class="container">
+            <h2 class="section-title">Recent Winners</h2>
+            <div class="winners-grid" id="winners-container">
+                <!-- Winners will be loaded dynamically -->
+                <div class="loading">Loading winners...</div>
+            </div>
+        </div>
+    </section>
 
-    <div class="box" id="liveEntries" style="display: none;">
-      <h2>📋 Live Entries</h2>
-      <ul id="entriesList"></ul>
-    </div>
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I enter a giveaway?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Simply click on the "Enter Now" button for any active giveaway, fill out the entry form with your details, and submit. You'll receive a confirmation email once your entry is recorded.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>When are winners selected?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Winners are selected shortly after the giveaway end date. All winners are contacted via email and announced on our winners page.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How many times can I enter?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Unless otherwise specified, you can enter each giveaway once per person. Additional entries won't increase your chances of winning.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are there any age restrictions?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Most giveaways are open to participants 18 years or older. Some giveaways may have specific age requirements which will be listed in the giveaway details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="box" id="winnerReveal" style="display: none;">
-      <h2>🎊 Winners</h2>
-      <ul id="winnerList"></ul>
-    </div>
-  </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GiveawayHub</h3>
+                    <p>Your destination for amazing giveaways and incredible prizes. Enter today for your chance to win!</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#giveaways">Giveaways</a></li>
+                        <li><a href="#winners">Winners</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GiveawayHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-  <script>
-    async function loadActiveGiveaway() {
-      try {
-        const res = await fetch('/.netlify/functions/getGiveaways');
-        const { giveaways } = await res.json();
-        const active = giveaways.find(g => g.status === 'active');
-
-        if (!active) {
-          document.getElementById('noGiveaway').style.display = 'block';
-          return;
-        }
-
-        window.currentGiveawayId = active.id;
-        document.getElementById('activeGiveaway').style.display = 'block';
-        document.getElementById('prize').textContent = active.title;
-        document.getElementById('deadline').textContent = new Date(active.deadline).toLocaleString();
-        document.getElementById('type').textContent = active.type;
-
-        startCountdown(active.deadline);
-        loadEntries();
-        revealWinners();
-      } catch (err) {
-        console.error('Failed to load giveaway:', err);
-      }
-    }
-
-    function startCountdown(deadline) {
-      const countdownEl = document.getElementById('countdown');
-      const end = new Date(deadline).getTime();
-  const update = () => {
-    const now = Date.now();
-    const diff = end - now;
-    if (diff <= 0) {
-      countdownEl.textContent = "⏰ Giveaway closed!";
-      return;
-    }
-    const hrs = Math.floor(diff / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    countdownEl.textContent = `⏳ Time left: ${hrs}h ${mins}m ${secs}s`;
-    setTimeout(update, 1000);
-  };
-  update();
-}
-
-async function loadEntries() {
-  const res = await fetch(`/.netlify/functions/getEntries?giveawayId=${window.currentGiveawayId}`);
-  const { entries } = await res.json();
-  const list = document.getElementById('entriesList');
-  list.innerHTML = '';
-  entries.forEach(entry => {
-    const li = document.createElement('li');
-    li.textContent = `${entry.name} (${entry.phone})`;
-    list.appendChild(li);
-  });
-  document.getElementById('liveEntries').style.display = 'block';
-}
-
-async function revealWinners() {
-  const res = await fetch('/.netlify/functions/getWinnerLogs');
-  const { logs } = await res.json();
-  const winners = logs.filter(log => log.giveaway_id === window.currentGiveawayId);
-  if (winners.length === 0) return;
-
-  const list = document.getElementById('winnerList');
-  list.innerHTML = '';
-  document.getElementById('winnerReveal').style.display = 'block';
-
-  for (const winner of winners) {
-    const entryRes = await fetch(`/.netlify/functions/getEntryById?id=${winner.entry_id}`);
-    const entry = await entryRes.json();
-    const li = document.createElement('li');
-    li.textContent = `🎉 ${entry.name} (${entry.phone})`;
-    list.appendChild(li);
-    await new Promise(r => setTimeout(r, 1000));
-  }
-}
-
-document.getElementById('entryForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const entry = {
-    id: crypto.randomUUID(),
-    giveaway_id: window.currentGiveawayId,
-    name: form.name.value,
-    telegram_handle: form.telegram_handle.value,
-    phone: form.phone.value,
-    submitted_at: new Date().toISOString(),
-    is_winner: 0
-  };
-
-  try {
-    const res = await fetch('/.netlify/functions/createEntry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry)
-    });
-
-    const result = await res.json();
-    if (res.ok) {
-      alert("✅ Entry submitted! Good luck!");
-      form.reset();
-      loadEntries();
-    } else {
-      alert("❌ Error: " + result.message);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Submission failed. Try again later.");
-  }
-});
-
-loadActiveGiveaway();
-
-
-  </script>
+    <script src="main.js"></script>
 </body>
-</html>
+  </html>
