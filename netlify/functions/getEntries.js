@@ -1,44 +1,33 @@
-export async function handler(event) {
+const fs = require('fs');
+const path = require('path');
+
+exports.handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' })
-    };
-  }
-
-  const giveawayId = event.queryStringParameters?.giveawayId;
-
-  if (!giveawayId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing giveawayId in query' })
+      body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
 
   try {
-    const response = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries`, {
-      headers: {
-        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-      }
-    });
-
-    const allEntries = await response.json();
-
-    // Filter entries by giveawayId
-    const entries = allEntries.filter(entry => entry.giveaway_id === giveawayId);
-
-    // Sort by submitted_at ascending
-    entries.sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
+    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
+    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
+    
+    const { giveawayId } = event.queryStringParameters || {};
+    
+    // Filter by giveawayId if provided
+    const filteredEntries = giveawayId 
+      ? entries.filter(entry => entry.giveawayId === giveawayId)
+      : entries;
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ entries })
+      body: JSON.stringify(filteredEntries),
     };
   } catch (error) {
-    console.error('Error fetching entries from Blobs:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal server error' })
+      body: JSON.stringify({ error: error.message }),
     };
   }
-      }
+};
