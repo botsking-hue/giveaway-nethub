@@ -1,0 +1,16 @@
+[
+  {
+    "id": "admin001",
+    "username": "morpheus",
+    "password_hash": "hashed_password_here",
+    "role": "superadmin",
+    "last_login": "2025-08-21T10:00:00Z"
+  },
+  {
+    "id": "admin002",
+    "username": "trinity",
+    "password_hash": "hashed_password_here",
+    "role": "editor",
+    "last_login": "2025-08-20T18:30:00Z"
+  }
+]
