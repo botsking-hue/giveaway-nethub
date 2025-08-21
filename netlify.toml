@@ -1,9 +1,7 @@
 [build]
+  command = "echo 'Static site — no build step required'"
   publish = "public"
   functions = "netlify/functions"
-
-[dev]
-  autoLaunch = true
 
 [[redirects]]
   from = "/api/*"
