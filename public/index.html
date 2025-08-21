@@ -28,7 +28,7 @@
       margin-bottom: 30px;
       box-shadow: 0 0 10px #00FF00;
     }
-    input, textarea {
+    input {
       width: 100%;
       margin-bottom: 10px;
       padding: 10px;
@@ -45,10 +45,6 @@
       cursor: pointer;
       box-shadow: 0 0 10px #00FF00;
     }
-    a {
-      color: #00FF00;
-      text-decoration: underline;
-    }
     ul {
       list-style: none;
       padding-left: 0;
@@ -62,51 +58,154 @@
   <div class="container">
     <h1>🎉 Joel's Giveaways 🇰🇪</h1>
 
-    <!-- Active Giveaway -->
     <div class="box" id="activeGiveaway" style="display: none;">
       <h2>🔥 Current Giveaway</h2>
-      <p><strong>Prize:</strong> Samsung Galaxy A14 📱</p>
-      <p><strong>Deadline:</strong> 25th August, 11:59 PM</p>
-      <p><strong>Type:</strong> Random Selection</p>
-      <p><strong>Requirements:</strong> Name, Telegram Handle, Phone Number</p>
+      <p><strong>Prize:</strong> <span id="prize"></span></p>
+      <p><strong>Deadline:</strong> <span id="deadline"></span></p>
+      <p><strong>Type:</strong> <span id="type"></span></p>
+      <p><strong>Requirements:</strong> WhatsApp Number</p>
+      <p id="countdown"></p>
 
       <form id="entryForm">
-        <input type="text" placeholder="Your Name" required />
-        <input type="text" placeholder="Telegram Handle" required />
-        <input type="text" placeholder="Phone Number" required />
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="text" name="telegram_handle" placeholder="Telegram Handle" required />
+        <input type="text" name="phone" placeholder="WhatsApp Number" required />
         <button type="submit">🚀 Enter Giveaway</button>
       </form>
     </div>
 
-    <!-- No Giveaway -->
     <div class="box" id="noGiveaway" style="display: none;">
       <h2>😢 No Active Giveaway</h2>
-      <p>Stay tuned for the next drop! We announce all updates on our WhatsApp channel 👇</p>
-      <p><a href="https://chat.whatsapp.com/BuWxeKRgreL7OIV6MumTng?mode=ac_t" target="_blank">Join Joel's Giveaway Channel 💬</a></p>
+      <p>Stay tuned for the next drop! Join our WhatsApp channel 👇</p>
+      <p><a href="https://chat.whatsapp.com/BuWxeKRgreL7OIV6MumTng?mode=ac_t" target="_blank">Joel's Giveaway Channel 💬</a></p>
     </div>
 
-    <!-- Past Winners -->
-    <div class="box">
-      <h2>🏆 Past Winners</h2>
-      <ul>
-        <li><strong>@mkenya254</strong> won a JBL Bluetooth Speaker 🔊</li>
-        <li><strong>@nairobi_gamer</strong> won a Ksh 2,000 M-Pesa voucher 💸</li>
-        <li><strong>@shiro_ke</strong> won a branded hoodie 🧥</li>
-      </ul>
+    <div class="box" id="liveEntries" style="display: none;">
+      <h2>📋 Live Entries</h2>
+      <ul id="entriesList"></ul>
+    </div>
+
+    <div class="box" id="winnerReveal" style="display: none;">
+      <h2>🎊 Winners</h2>
+      <ul id="winnerList"></ul>
     </div>
   </div>
 
   <script>
-    // Simulate giveaway status
-    const isGiveawayActive = true; // Change to false to test inactive view
+    async function loadActiveGiveaway() {
+      try {
+        const res = await fetch('/.netlify/functions/getGiveaways');
+        const { giveaways } = await res.json();
+        const active = giveaways.find(g => g.status === 'active');
 
-    document.getElementById('activeGiveaway').style.display = isGiveawayActive ? 'block' : 'none';
-    document.getElementById('noGiveaway').style.display = isGiveawayActive ? 'none' : 'block';
+        if (!active) {
+          document.getElementById('noGiveaway').style.display = 'block';
+          return;
+        }
 
-    document.getElementById('entryForm')?.addEventListener('submit', function(e) {
-      e.preventDefault();
-      alert("✅ Entry submitted! Good luck!");
+        window.currentGiveawayId = active.id;
+        document.getElementById('activeGiveaway').style.display = 'block';
+        document.getElementById('prize').textContent = active.title;
+        document.getElementById('deadline').textContent = new Date(active.deadline).toLocaleString();
+        document.getElementById('type').textContent = active.type;
+
+        startCountdown(active.deadline);
+        loadEntries();
+        revealWinners();
+      } catch (err) {
+        console.error('Failed to load giveaway:', err);
+      }
+    }
+
+    function startCountdown(deadline) {
+      const countdownEl = document.getElementById('countdown');
+      const end = new Date(deadline).getTime();
+  const update = () => {
+    const now = Date.now();
+    const diff = end - now;
+    if (diff <= 0) {
+      countdownEl.textContent = "⏰ Giveaway closed!";
+      return;
+    }
+    const hrs = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    countdownEl.textContent = `⏳ Time left: ${hrs}h ${mins}m ${secs}s`;
+    setTimeout(update, 1000);
+  };
+  update();
+}
+
+async function loadEntries() {
+  const res = await fetch(`/.netlify/functions/getEntries?giveawayId=${window.currentGiveawayId}`);
+  const { entries } = await res.json();
+  const list = document.getElementById('entriesList');
+  list.innerHTML = '';
+  entries.forEach(entry => {
+    const li = document.createElement('li');
+    li.textContent = `${entry.name} (${entry.phone})`;
+    list.appendChild(li);
+  });
+  document.getElementById('liveEntries').style.display = 'block';
+}
+
+async function revealWinners() {
+  const res = await fetch('/.netlify/functions/getWinnerLogs');
+  const { logs } = await res.json();
+  const winners = logs.filter(log => log.giveaway_id === window.currentGiveawayId);
+  if (winners.length === 0) return;
+
+  const list = document.getElementById('winnerList');
+  list.innerHTML = '';
+  document.getElementById('winnerReveal').style.display = 'block';
+
+  for (const winner of winners) {
+    const entryRes = await fetch(`/.netlify/functions/getEntryById?id=${winner.entry_id}`);
+    const entry = await entryRes.json();
+    const li = document.createElement('li');
+    li.textContent = `🎉 ${entry.name} (${entry.phone})`;
+    list.appendChild(li);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+}
+
+document.getElementById('entryForm')?.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const entry = {
+    id: crypto.randomUUID(),
+    giveaway_id: window.currentGiveawayId,
+    name: form.name.value,
+    telegram_handle: form.telegram_handle.value,
+    phone: form.phone.value,
+    submitted_at: new Date().toISOString(),
+    is_winner: 0
+  };
+
+  try {
+    const res = await fetch('/.netlify/functions/createEntry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
     });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert("✅ Entry submitted! Good luck!");
+      form.reset();
+      loadEntries();
+    } else {
+      alert("❌ Error: " + result.message);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Submission failed. Try again later.");
+  }
+});
+
+loadActiveGiveaway();
+
+
   </script>
 </body>
-  </html>
+</html>
