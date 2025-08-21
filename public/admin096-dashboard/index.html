@@ -51,7 +51,7 @@
     <form id="giveawayForm">
       <select id="title" required>
         <option value="">Select Giveaway Title</option>
-        <option value="Airtel Unlimited 1 Week">Airtel Unlimited 1 Week</option>
+        <option value="Airtel Unlimited 3 Days">Airtel Unlimited 3 Days</option>
         <option value="M-Pesa Voucher Ksh 500">M-Pesa Voucher Ksh 500</option>
         <option value="Branded Hoodie">Branded Hoodie</option>
       </select>
@@ -64,11 +64,11 @@
         <option value="random">Random Selection</option>
       </select>
 
-      <textarea id="requirements" placeholder="Required info from participants" required>Hc Hwid, Mobile number</textarea>
+      <textarea id="requirements" placeholder="Comma-separated requirements (e.g. Hc Hwid, Mobile number)" required>Hc Hwid, Mobile number</textarea>
 
-      <input type="datetime-local" id="deadline" value="2025-08-21T12:55" required />
+      <input type="datetime-local" id="deadline" value="2025-08-21T13:10" required />
 
-      <input type="number" id="winners" placeholder="Number of winners" min="1" value="3" required />
+      <input type="number" id="winners" placeholder="Number of winners" min="1" value="2" required />
 
       <button type="submit">🚀 Launch Giveaway</button>
     </form>
@@ -78,21 +78,24 @@
     document.getElementById('giveawayForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const rawRequirements = document.getElementById('requirements').value;
+      const requirementsArray = rawRequirements.split(',').map(r => r.trim()).filter(Boolean);
+
       const data = {
         id: crypto.randomUUID(),
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
         type: document.getElementById('type').value,
-        requirements: document.getElementById('requirements').value,
+        requirements: requirementsArray,
         deadline: document.getElementById('deadline').value,
         max_winners: parseInt(document.getElementById('winners').value),
         status: "active",
         created_at: new Date().toISOString()
       };
 
-      // Validate all fields
-      for (const key in data) {
-        if (!data[key] && key !== "max_winners") {
+      // Validate required fields
+      for (const key of ['title', 'description', 'type', 'requirements', 'deadline']) {
+        if (!data[key] || (Array.isArray(data[key]) && data[key].length === 0)) {
           alert(`❌ Missing field: ${key}`);
           return;
         }
@@ -104,19 +107,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
+    const result = await res.json();
+    if (res.ok) {
+      alert("✅ Giveaway created successfully!");
+      document.getElementById('giveawayForm').reset();
+    } else {
+      alert("❌ Error: " + result.message);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Submission failed. Try again later.");
+  }
+});
 
-        const result = await res.json();
-        if (res.ok) {
-          alert("✅ Giveaway created successfully!");
-          document.getElementById('giveawayForm').reset();
-        } else {
-          alert("❌ Error: " + result.message);
-        }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Submission failed. Try again later.");
-      }
-    });
+
   </script>
 
 </body>
