@@ -1,9 +1,36 @@
 [
   {
-    "id": "log001",
-    "giveaway_id": "gw001",
-    "entry_id": "entry001",
-    "method": "random",
-    "selected_at": "2025-08-21T12:00:00Z"
+    "id": "winner-1724241400000",
+    "giveawayId": "giveaway-1724241000000",
+    "giveawayTitle": "Summer iPhone Giveaway",
+    "winners": [
+      {
+        "entryId": "entry-1724241600000",
+        "userId": "user-12345",
+        "username": "sarah_johnson",
+        "email": "sarah@example.com",
+        "prize": "iPhone 15 Pro Max (256GB)"
+      }
+    ],
+    "drawnAt": "2025-08-21T10:20:00.000Z",
+    "drawnBy": "admin",
+    "status": "contacted"
+  },
+  {
+    "id": "winner-1724241500000",
+    "giveawayId": "giveaway-1724241100000",
+    "giveawayTitle": "Back to School Laptop",
+    "winners": [
+      {
+        "entryId": "entry-1724241780000",
+        "userId": "user-11223",
+        "username": "john_doe",
+        "email": "john@example.com",
+        "prize": "MacBook Pro 14-inch (M3 Chip)"
+      }
+    ],
+    "drawnAt": "2025-08-20T18:30:00.000Z",
+    "drawnBy": "moderator",
+    "status": "prize_sent"
   }
 ]
