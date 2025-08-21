@@ -1,68 +1,102 @@
-import { db } from '../../lib/db'; // Your DB connection
 import { v4 as uuidv4 } from 'uuid';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+export async function handler(event) {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: 'Method not allowed' })
+    };
   }
 
-  const { giveawayId } = req.body;
+  const { giveawayId } = JSON.parse(event.body);
 
   if (!giveawayId) {
-    return res.status(400).json({ message: 'Missing giveawayId' });
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Missing giveawayId' })
+    };
   }
 
   try {
-    // Get giveaway details
-    const giveaway = await db.get(
-      `SELECT max_winners, type FROM giveaways WHERE id = ?`,
-      [giveawayId]
-    );
+    // Fetch giveaway details
+    const giveawayRes = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/giveaways`, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+      }
+    });
+    const giveaways = await giveawayRes.json();
+    const giveaway = giveaways.find(g => g.id === giveawayId);
 
     if (!giveaway) {
-      return res.status(404).json({ message: 'Giveaway not found' });
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Giveaway not found' })
+      };
     }
 
-    // Get eligible entries
-    const entries = await db.all(
-      `SELECT id FROM entries WHERE giveaway_id = ? AND is_winner = 0`,
-      [giveawayId]
-    );
+    // Fetch entries
+    const entriesRes = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries`, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+      }
+    });
+    const allEntries = await entriesRes.json();
+    const eligibleEntries = allEntries.filter(e => e.giveaway_id === giveawayId && e.is_winner === 0);
 
-    if (entries.length === 0) {
-      return res.status(200).json({ message: 'No eligible entries found' });
+    if (eligibleEntries.length === 0) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'No eligible entries found' })
+      };
     }
 
-    // Shuffle and pick winners
-    const shuffled = entries.sort(() => 0.5 - Math.random());
+    // Pick winners
+    const shuffled = eligibleEntries.sort(() => 0.5 - Math.random());
     const winners = shuffled.slice(0, giveaway.max_winners);
 
     // Update winners and log them
-    for (const winner of winners) {
-      await db.run(
-        `UPDATE entries SET is_winner = 1 WHERE id = ?`,
-        [winner.id]
-      );
+    const updatePromises = winners.map(async winner => {
+      // Update entry
+      await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries/${winner.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+        },
+        body: JSON.stringify({ is_winner: 1 })
+      });
 
-      await db.run(
-        `INSERT INTO winner_logs (id, giveaway_id, entry_id, method, selected_at)
-         VALUES (?, ?, ?, ?, ?)`,
-        [
-          uuidv4(),
-          giveawayId,
-          winner.id,
-          'random',
-          new Date().toISOString()
-        ]
-      );
-    }
-
-    return res.status(200).json({
-      message: 'Winners selected successfully',
-      winnerIds: winners.map(w => w.id)
+      // Log winner
+      await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/winner_logs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+        },
+        body: JSON.stringify({
+          id: uuidv4(),
+          giveaway_id: giveawayId,
+          entry_id: winner.id,
+          method: 'random',
+          selected_at: new Date().toISOString()
+        })
+      });
     });
+
+    await Promise.all(updatePromises);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Winners selected successfully',
+        winnerIds: winners.map(w => w.id)
+      })
+    };
   } catch (error) {
     console.error('Error picking winners:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal server error' })
+    };
   }
-}
+      }
