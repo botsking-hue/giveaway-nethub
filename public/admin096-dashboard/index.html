@@ -22,6 +22,7 @@
       padding: 8px;
       margin-bottom: 12px;
       width: 100%;
+      font-family: inherit;
     }
     button {
       background-color: #00FF00;
@@ -44,46 +45,36 @@
 
   <h1>🟩 Joel's Giveaway Admin Panel</h1>
 
-  <!-- Login Panel -->
-  <div class="section" id="loginPanel">
-    <h2>🔐 Admin Login</h2>
-    <input type="text" id="adminUsername" placeholder="Username" />
-    <input type="password" id="adminPassword" placeholder="Password" />
-    <button onclick="loginAdmin()">Login</button>
-  </div>
-
   <!-- Create Giveaway Section -->
-  <div class="section" id="createGiveaway" style="display:none;">
+  <div class="section" id="createGiveaway">
     <h2>🎁 Create New Giveaway</h2>
     <form id="giveawayForm">
-      <input type="text" id="title" placeholder="What are you giving away?" required />
-      <textarea id="description" placeholder="Giveaway details..." required></textarea>
+      <select id="title" required>
+        <option value="">Select Giveaway Title</option>
+        <option value="Airtel Unlimited 1 Week">Airtel Unlimited 1 Week</option>
+        <option value="M-Pesa Voucher Ksh 500">M-Pesa Voucher Ksh 500</option>
+        <option value="Branded Hoodie">Branded Hoodie</option>
+      </select>
+
+      <textarea id="description" placeholder="Giveaway details..." required>Just enjoy unlimited browsing</textarea>
+
       <select id="type" required>
         <option value="">Select competition type</option>
         <option value="first-come">First-Come Winners</option>
         <option value="random">Random Selection</option>
       </select>
-      <textarea id="requirements" placeholder="Required info from participants" required></textarea>
-      <input type="datetime-local" id="deadline" required />
-      <input type="number" id="winners" placeholder="Number of winners" min="1" required />
+
+      <textarea id="requirements" placeholder="Required info from participants" required>Hc Hwid, Mobile number</textarea>
+
+      <input type="datetime-local" id="deadline" value="2025-08-21T12:55" required />
+
+      <input type="number" id="winners" placeholder="Number of winners" min="1" value="3" required />
+
       <button type="submit">🚀 Launch Giveaway</button>
     </form>
   </div>
 
   <script>
-    function loginAdmin() {
-      const username = document.getElementById('adminUsername').value;
-      const password = document.getElementById('adminPassword').value;
-
-      // Simple mock login (replace with real auth logic)
-      if (username === "assmin" && password === "assmin") {
-        document.getElementById('loginPanel').style.display = 'none';
-        document.getElementById('createGiveaway').style.display = 'block';
-      } else {
-        alert("❌ Invalid credentials");
-      }
-    }
-
     document.getElementById('giveawayForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -99,26 +90,33 @@
         created_at: new Date().toISOString()
       };
 
+      // Validate all fields
+      for (const key in data) {
+        if (!data[key] && key !== "max_winners") {
+          alert(`❌ Missing field: ${key}`);
+          return;
+        }
+      }
+
       try {
         const res = await fetch('/.netlify/functions/createGiveaway', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
-          });
-    const result = await res.json();
-    if (res.ok) {
-      alert("✅ Giveaway created successfully!");
-      document.getElementById('giveawayForm').reset();
-    } else {
-      alert("❌ Error: " + result.message);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Submission failed. Try again later.");
-  }
-});
+        });
 
-
+        const result = await res.json();
+        if (res.ok) {
+          alert("✅ Giveaway created successfully!");
+          document.getElementById('giveawayForm').reset();
+        } else {
+          alert("❌ Error: " + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Submission failed. Try again later.");
+      }
+    });
   </script>
 
 </body>
