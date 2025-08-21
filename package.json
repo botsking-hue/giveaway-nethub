@@ -1,17 +1,17 @@
 {
   "name": "giveaway-nethub",
   "version": "1.0.0",
-  "description": "Static giveaway dashboard with Netlify Functions and Turso backend",
+  "description": "Matrix-themed giveaway system powered by Netlify Blobs",
   "scripts": {
-    "build": "echo 'No build step required'",
+    "dev": "netlify dev",
+    "build": "echo 'Static site — no build step required'",
     "start": "netlify dev"
   },
   "dependencies": {
-    "@libsql/client": "^0.1.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {},
-  "keywords": ["giveaway", "netlify", "turso", "dashboard", "kenya"],
+  "keywords": ["netlify", "giveaway", "blobs", "matrix"],
   "author": "Joel",
   "license": "MIT"
 }
