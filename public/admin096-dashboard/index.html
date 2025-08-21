@@ -13,6 +13,7 @@
     }
     h1, h2 {
       color: #00FF00;
+      text-shadow: 0 0 5px #00FF00;
     }
     input, textarea, select {
       background-color: #111;
@@ -29,9 +30,13 @@
       padding: 10px 20px;
       border: none;
       cursor: pointer;
+      box-shadow: 0 0 10px #00FF00;
     }
     .section {
       margin-top: 30px;
+      border: 1px solid #00FF00;
+      padding: 20px;
+      box-shadow: 0 0 10px #00FF00;
     }
   </style>
 </head>
@@ -69,35 +74,51 @@
     function loginAdmin() {
       const username = document.getElementById('adminUsername').value;
       const password = document.getElementById('adminPassword').value;
-      // Simple mock login (replace with real auth)
+
+      // Simple mock login (replace with real auth logic)
       if (username === "assmin" && password === "assmin") {
         document.getElementById('loginPanel').style.display = 'none';
         document.getElementById('createGiveaway').style.display = 'block';
       } else {
-        alert("Invalid credentials");
+        alert("❌ Invalid credentials");
       }
     }
 
     document.getElementById('giveawayForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const data = {
+        id: crypto.randomUUID(),
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
         type: document.getElementById('type').value,
         requirements: document.getElementById('requirements').value,
         deadline: document.getElementById('deadline').value,
-        winners: document.getElementById('winners').value
+        max_winners: parseInt(document.getElementById('winners').value),
+        status: "active",
+        created_at: new Date().toISOString()
       };
 
-      const res = await fetch('/api/createGiveaway', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch('/.netlify/functions/createGiveaway', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+          });
+    const result = await res.json();
+    if (res.ok) {
+      alert("✅ Giveaway created successfully!");
+      document.getElementById('giveawayForm').reset();
+    } else {
+      alert("❌ Error: " + result.message);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Submission failed. Try again later.");
+  }
+});
 
-      const result = await res.json();
-      alert(result.message || "Giveaway created!");
-    });
+
   </script>
 
 </body>
