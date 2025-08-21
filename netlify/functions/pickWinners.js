@@ -1,102 +1,86 @@
-import { v4 as uuidv4 } from 'uuid';
+const fs = require('fs');
+const path = require('path');
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' })
-    };
-  }
-
-  const { giveawayId } = JSON.parse(event.body);
-
-  if (!giveawayId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing giveawayId' })
+      body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
 
   try {
-    // Fetch giveaway details
-    const giveawayRes = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/giveaways`, {
-      headers: {
-        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-      }
-    });
-    const giveaways = await giveawayRes.json();
-    const giveaway = giveaways.find(g => g.id === giveawayId);
+    const { giveawayId, numberOfWinners = 1 } = JSON.parse(event.body);
+    
+    if (!giveawayId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Giveaway ID is required' }),
+      };
+    }
 
-    if (!giveaway) {
+    // Load entries
+    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
+    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
+    
+    // Filter entries for this giveaway
+    const giveawayEntries = entries.filter(entry => entry.giveawayId === giveawayId);
+
+    if (giveawayEntries.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: 'Giveaway not found' })
+        body: JSON.stringify({ error: 'No entries found for this giveaway' }),
       };
     }
 
-    // Fetch entries
-    const entriesRes = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries`, {
-      headers: {
-        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-      }
-    });
-    const allEntries = await entriesRes.json();
-    const eligibleEntries = allEntries.filter(e => e.giveaway_id === giveawayId && e.is_winner === 0);
-
-    if (eligibleEntries.length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'No eligible entries found' })
-      };
+    // Select random winners
+    const winners = [];
+    const entriesCopy = [...giveawayEntries];
+    
+    for (let i = 0; i < Math.min(numberOfWinners, entriesCopy.length); i++) {
+      const randomIndex = Math.floor(Math.random() * entriesCopy.length);
+      winners.push(entriesCopy.splice(randomIndex, 1)[0]);
     }
 
-    // Pick winners
-    const shuffled = eligibleEntries.sort(() => 0.5 - Math.random());
-    const winners = shuffled.slice(0, giveaway.max_winners);
-
-    // Update winners and log them
-    const updatePromises = winners.map(async winner => {
-      // Update entry
-      await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries/${winner.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-        },
-        body: JSON.stringify({ is_winner: 1 })
-      });
-
-      // Log winner
-      await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/winner_logs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-        },
-        body: JSON.stringify({
-          id: uuidv4(),
-          giveaway_id: giveawayId,
-          entry_id: winner.id,
-          method: 'random',
-          selected_at: new Date().toISOString()
-        })
-      });
+    // Load winner logs
+    const winnersPath = path.join(process.cwd(), 'public', 'storage', 'winner_logs.json');
+    const winnerLogs = JSON.parse(fs.readFileSync(winnersPath, 'utf8'));
+    
+    // Add new winner log
+    const winnerLogId = `winner-${Date.now()}`;
+    winnerLogs.push({
+      id: winnerLogId,
+      giveawayId,
+      winners,
+      drawnAt: new Date().toISOString(),
     });
 
-    await Promise.all(updatePromises);
+    // Write back to winner logs
+    fs.writeFileSync(winnersPath, JSON.stringify(winnerLogs, null, 2));
+
+    // Update giveaway with winner info
+    const giveawaysPath = path.join(process.cwd(), 'public', 'storage', 'giveaways.json');
+    const giveaways = JSON.parse(fs.readFileSync(giveawaysPath, 'utf8'));
+    
+    const giveawayIndex = giveaways.findIndex(g => g.id === giveawayId);
+    if (giveawayIndex !== -1) {
+      giveaways[giveawayIndex].winners = winners;
+      giveaways[giveawayIndex].updatedAt = new Date().toISOString();
+      fs.writeFileSync(giveawaysPath, JSON.stringify(giveaways, null, 2));
+    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: 'Winners selected successfully',
-        winnerIds: winners.map(w => w.id)
-      })
+        success: true,
+        winners,
+        message: `Selected ${winners.length} winner(s) successfully`,
+      }),
     };
   } catch (error) {
-    console.error('Error picking winners:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal server error' })
+      body: JSON.stringify({ error: error.message }),
     };
   }
-      }
+};
