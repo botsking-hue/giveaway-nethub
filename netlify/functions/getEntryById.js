@@ -1,45 +1,44 @@
-export async function handler(event) {
+const fs = require('fs');
+const path = require('path');
+
+exports.handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' })
-    };
-  }
-
-  const entryId = event.queryStringParameters?.id;
-
-  if (!entryId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing entry ID' })
+      body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
 
   try {
-    const response = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries/${entryId}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
-      }
-    });
-
-    if (!response.ok) {
+    const { id } = event.queryStringParameters;
+    
+    if (!id) {
       return {
-        statusCode: response.status,
-        body: JSON.stringify({ message: 'Entry not found' })
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Entry ID is required' }),
       };
     }
 
-    const entry = await response.json();
+    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
+    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
+    
+    const entry = entries.find(e => e.id === id);
+
+    if (!entry) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'Entry not found' }),
+      };
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(entry)
+      body: JSON.stringify(entry),
     };
   } catch (error) {
-    console.error('Error fetching entry:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal server error' })
+      body: JSON.stringify({ error: error.message }),
     };
   }
-}
+};
