@@ -1,29 +1,44 @@
-
-import { db } from '../../lib/db'; // Your database connection
-
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+export async function handler(event) {
+  if (event.httpMethod !== 'GET') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: 'Method not allowed' })
+    };
   }
 
-  const { giveawayId } = req.query;
+  const giveawayId = event.queryStringParameters?.giveawayId;
 
   if (!giveawayId) {
-    return res.status(400).json({ message: 'Missing giveawayId in query' });
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Missing giveawayId in query' })
+    };
   }
 
   try {
-    const entries = await db.all(
-      `SELECT id, name, telegram_handle, phone, submitted_at, is_winner
-       FROM entries
-       WHERE giveaway_id = ?
-       ORDER BY submitted_at ASC`,
-      [giveawayId]
-    );
+    const response = await fetch(`https://api.netlify.com/api/v1/blobs/${process.env.SITE_ID}/entries`, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOBS_API_TOKEN}`
+      }
+    });
 
-    return res.status(200).json({ entries });
+    const allEntries = await response.json();
+
+    // Filter entries by giveawayId
+    const entries = allEntries.filter(entry => entry.giveaway_id === giveawayId);
+
+    // Sort by submitted_at ascending
+    entries.sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ entries })
+    };
   } catch (error) {
-    console.error('Error fetching entries:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Error fetching entries from Blobs:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal server error' })
+    };
   }
       }
