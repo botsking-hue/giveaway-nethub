@@ -1,127 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Joel's Giveaway Admin Panel</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #00FF00;
-      font-family: 'Courier New', monospace;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #00FF00;
-      text-shadow: 0 0 5px #00FF00;
-    }
-    input, textarea, select {
-      background-color: #111;
-      color: #00FF00;
-      border: 1px solid #00FF00;
-      padding: 8px;
-      margin-bottom: 12px;
-      width: 100%;
-      font-family: inherit;
-    }
-    button {
-      background-color: #00FF00;
-      color: #000;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 10px #00FF00;
-    }
-    .section {
-      margin-top: 30px;
-      border: 1px solid #00FF00;
-      padding: 20px;
-      box-shadow: 0 0 10px #00FF00;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway Hub - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>Giveaway<span>Hub</span> Admin</h1>
+            </div>
+            <nav class="admin-nav">
+                <ul>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item" data-section="giveaways">
+                        <i class="fas fa-gift"></i>
+                        <span>Giveaways</span>
+                    </li>
+                    <li class="nav-item" data-section="entries">
+                        <i class="fas fa-users"></i>
+                        <span>Entries</span>
+                    </li>
+                    <li class="nav-item" data-section="winners">
+                        <i class="fas fa-trophy"></i>
+                        <span>Winners</span>
+                    </li>
+                    <li class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </li>
+                    <li class="nav-item" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
-  <h1>🟩 Joel's Giveaway Admin Panel</h1>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="section-title">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="admin-profile">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=4361ee&color=fff" alt="Admin">
+                        <span>Admin User</span>
+                    </div>
+                </div>
+            </header>
 
-  <!-- Create Giveaway Section -->
-  <div class="section" id="createGiveaway">
-    <h2>🎁 Create New Giveaway</h2>
-    <form id="giveawayForm">
-      <select id="title" required>
-        <option value="">Select Giveaway Title</option>
-        <option value="Airtel Unlimited 3 Days">Airtel Unlimited 3 Days</option>
-        <option value="M-Pesa Voucher Ksh 500">M-Pesa Voucher Ksh 500</option>
-        <option value="Branded Hoodie">Branded Hoodie</option>
-      </select>
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-giveaways">0</h3>
+                            <p>Total Giveaways</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="active-giveaways">0</h3>
+                            <p>Active Giveaways</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-entries">0</h3>
+                            <p>Total Entries</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-winners">0</h3>
+                            <p>Winners Selected</p>
+                        </div>
+                    </div>
+                </div>
 
-      <textarea id="description" placeholder="Giveaway details..." required>Just enjoy unlimited browsing</textarea>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list" id="activity-list">
+                            <div class="activity-item">
+                                <i class="fas fa-gift activity-icon"></i>
+                                <div class="activity-content">
+                                    <p>New giveaway "Summer Contest" created</p>
+                                    <span class="activity-time">2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-user activity-icon"></i>
+                                <div class="activity-content">
+                                    <p>10 new entries received</p>
+                                    <span class="activity-time">5 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-trophy activity-icon"></i>
+                                <div class="activity-content">
+                                    <p>Winners selected for "Spring Giveaway"</p>
+                                    <span class="activity-time">1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="showSection('giveaways')">
+                                <i class="fas fa-plus"></i>
+                                <span>Create Giveaway</span>
+                            </button>
+                            <button class="action-btn" onclick="showSection('entries')">
+                                <i class="fas fa-eye"></i>
+                                <span>View Entries</span>
+                            </button>
+                            <button class="action-btn" onclick="showSection('winners')">
+                                <i class="fas fa-trophy"></i>
+                                <span>Pick Winners</span>
+                            </button>
+                            <button class="action-btn" onclick="exportData()">
+                                <i class="fas fa-download"></i>
+                                <span>Export Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-      <select id="type" required>
-        <option value="">Select competition type</option>
-        <option value="first-come">First-Come Winners</option>
-        <option value="random">Random Selection</option>
-      </select>
+            <!-- Giveaways Section -->
+            <section id="giveaways-section" class="content-section">
+                <div class="section-header">
+                    <h3>Manage Giveaways</h3>
+                    <button class="btn btn-primary" onclick="openGiveawayModal()">
+                        <i class="fas fa-plus"></i> New Giveaway
+                    </button>
+                </div>
+                
+                <div class="filters">
+                    <select id="status-filter">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="ended">Ended</option>
+                    </select>
+                    <input type="text" id="search-giveaways" placeholder="Search giveaways...">
+                </div>
 
-      <textarea id="requirements" placeholder="Comma-separated requirements (e.g. Hc Hwid, Mobile number)" required>Hc Hwid, Mobile number</textarea>
+                <div class="table-container">
+                    <table id="giveaways-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Prize</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Entries</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="giveaways-tbody">
+                            <!-- Giveaways will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-      <input type="datetime-local" id="deadline" value="2025-08-21T13:10" required />
+            <!-- Entries Section -->
+            <section id="entries-section" class="content-section">
+                <div class="section-header">
+                    <h3>Manage Entries</h3>
+                </div>
 
-      <input type="number" id="winners" placeholder="Number of winners" min="1" value="2" required />
+                <div class="filters">
+                    <select id="giveaway-filter">
+                        <option value="all">All Giveaways</option>
+                        <!-- Giveaway options will be loaded here -->
+                    </select>
+                    <input type="text" id="search-entries" placeholder="Search entries...">
+                </div>
 
-      <button type="submit">🚀 Launch Giveaway</button>
-    </form>
-  </div>
+                <div class="table-container">
+                    <table id="entries-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Username</th>
+                                <th>Giveaway</th>
+                                <th>Entry Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="entries-tbody">
+                            <!-- Entries will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-  <script>
-    document.getElementById('giveawayForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+            <!-- Winners Section -->
+            <section id="winners-section" class="content-section">
+                <div class="section-header">
+                    <h3>Manage Winners</h3>
+                </div>
 
-      const rawRequirements = document.getElementById('requirements').value;
-      const requirementsArray = rawRequirements.split(',').map(r => r.trim()).filter(Boolean);
+                <div class="filters">
+                    <select id="winner-giveaway-filter">
+                        <option value="all">All Giveaways</option>
+                        <!-- Giveaway options will be loaded here -->
+                    </select>
+                </div>
 
-      const data = {
-        id: crypto.randomUUID(),
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        type: document.getElementById('type').value,
-        requirements: requirementsArray,
-        deadline: document.getElementById('deadline').value,
-        max_winners: parseInt(document.getElementById('winners').value),
-        status: "active",
-        created_at: new Date().toISOString()
-      };
+                <div class="table-container">
+                    <table id="winners-table">
+                        <thead>
+                            <tr>
+                                <th>Winner</th>
+                                <th>Email</th>
+                                <th>Prize</th>
+                                <th>Giveaway</th>
+                                <th>Win Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="winners-tbody">
+                            <!-- Winners will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
 
-      // Validate required fields
-      for (const key of ['title', 'description', 'type', 'requirements', 'deadline']) {
-        if (!data[key] || (Array.isArray(data[key]) && data[key].length === 0)) {
-          alert(`❌ Missing field: ${key}`);
-          return;
-        }
-      }
+                <div class="pick-winners-section">
+                    <h4>Pick Winners</h4>
+                    <div class="pick-winners-form">
+                        <select id="pick-giveaway">
+                            <option value="">Select Giveaway</option>
+                            <!-- Active giveaways will be loaded here -->
+                        </select>
+                        <input type="number" id="winners-count" placeholder="Number of winners" min="1" value="1">
+                        <button class="btn btn-primary" onclick="pickWinners()">Pick Winners</button>
+                    </div>
+                </div>
+            </section>
 
-      try {
-        const res = await fetch('/.netlify/functions/createGiveaway', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-    const result = await res.json();
-    if (res.ok) {
-      alert("✅ Giveaway created successfully!");
-      document.getElementById('giveawayForm').reset();
-    } else {
-      alert("❌ Error: " + result.message);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Submission failed. Try again later.");
-  }
-});
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section">
+                <div class="section-header">
+                    <h3>Settings</h3>
+                </div>
 
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h4>General Settings</h4>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>Site Title</label>
+                                <input type="text" value="Giveaway Hub">
+                            </div>
+                            <div class="form-group">
+                                <label>Admin Email</label>
+                                <input type="email" value="admin@giveawayhub.com">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
 
-  </script>
+                    <div class="settings-card">
+                        <h4>User Management</h4>
+                        <div class="users-list">
+                            <div class="user-item">
+                                <img src="https://ui-avatars.com/api/?name=Admin+User&background=4361ee&color=fff" alt="Admin">
+                                <div class="user-info">
+                                    <strong>Admin User</strong>
+                                    <span>Super Admin</span>
+                                </div>
+                                <button class="btn btn-sm">Edit</button>
+                            </div>
+                            <div class="user-item">
+                                <img src="https://ui-avatars.com/api/?name=Moderator&background=3a0ca3&color=fff" alt="Moderator">
+                                <div class="user-info">
+                                    <strong>Moderator</strong>
+                                    <span>Moderator</span>
+                                </div>
+                                <button class="btn btn-sm">Edit</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Add User</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
 
+    <!-- Giveaway Modal -->
+    <div id="giveaway-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Create New Giveaway</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="giveaway-form">
+                <input type="hidden" id="giveaway-id">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="giveaway-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="giveaway-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Prize *</label>
+                    <input type="text" id="giveaway-prize" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date *</label>
+                        <input type="datetime-local" id="giveaway-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date *</label>
+                        <input type="datetime-local" id="giveaway-end" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Number of Winners *</label>
+                    <input type="number" id="giveaway-winners" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="giveaway-status">
+                        <option value="active">Active</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="ended">Ended</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Giveaway</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
 </body>
-</html>
+  </html>
