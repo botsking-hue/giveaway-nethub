@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import { getBlob, setBlob } from '@netlify/blobs';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -10,12 +9,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
-    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
-    
     const newEntry = JSON.parse(event.body);
     const entryId = `entry-${Date.now()}`;
-    
+
+    // Load existing entries from blob
+    const entries = await getBlob({ bucket: 'default', key: 'entries' });
+
     // Add new entry
     entries.push({
       ...newEntry,
@@ -23,8 +22,12 @@ exports.handler = async (event) => {
       createdAt: new Date().toISOString(),
     });
 
-    // Write back to file
-    fs.writeFileSync(entriesPath, JSON.stringify(entries, null, 2));
+    // Save updated entries back to blob
+    await setBlob({
+      bucket: 'default',
+      key: 'entries',
+      body: JSON.stringify(entries, null, 2),
+    });
 
     return {
       statusCode: 200,
@@ -40,4 +43,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-};
+}
