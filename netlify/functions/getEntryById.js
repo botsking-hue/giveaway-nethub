@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import { getBlob } from '@netlify/blobs';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
@@ -11,29 +10,31 @@ exports.handler = async (event) => {
 
   try {
     const { id } = event.queryStringParameters;
-    
+
     if (!id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Entry ID is required' }),
+        body: JSON.stringify({ error: 'Giveaway ID is required' }),
       };
     }
 
-    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
-    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
-    
-    const entry = entries.find(e => e.id === id);
+    const giveaways = await getBlob({
+      bucket: 'default',
+      key: 'giveaways',
+    });
 
-    if (!entry) {
+    const giveaway = giveaways.find(g => g.id === id);
+
+    if (!giveaway) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'Entry not found' }),
+        body: JSON.stringify({ error: 'Giveaway not found' }),
       };
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(entry),
+      body: JSON.stringify(giveaway),
     };
   } catch (error) {
     return {
@@ -41,4 +42,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-};
+                              }
