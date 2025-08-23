@@ -14,14 +14,14 @@ const GIVEAWAYS_API = `${API_BASE}/getGiveaways`;
 const ENTRIES_API = `${API_BASE}/createEntry`;
 const WINNERS_API = `${API_BASE}/getWinnerLogs`;
 
-// Initialize the application
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadGiveaways();
   loadWinners();
   setupEventListeners();
 });
 
-// Set up event listeners
+// Event Listeners
 function setupEventListeners() {
   hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('active');
@@ -64,7 +64,7 @@ function setupEventListeners() {
   });
 }
 
-// Load giveaways
+// Load Giveaways
 async function loadGiveaways() {
   try {
     const response = await fetch(GIVEAWAYS_API);
@@ -80,7 +80,7 @@ async function loadGiveaways() {
   }
 }
 
-// Display giveaways
+// Display Giveaways
 function displayGiveaways(giveaways) {
   if (!giveaways || giveaways.length === 0) {
     giveawaysContainer.innerHTML = `
@@ -104,7 +104,7 @@ function displayGiveaways(giveaways) {
         </div>
         <p class="giveaway-description">${giveaway.description}</p>
         ${giveaway.status === 'active' ? 
-          `<button class="btn enter-btn" data-id="${giveaway.id}">Enter Now</button>` :
+          <button class="btn enter-btn" data-id="${giveaway.id}">Enter Now</button> : 
           <button class="btn" disabled>${giveaway.status === 'upcoming' ? 'Coming Soon' : 'Ended'}</button>
         }
       </div>
@@ -119,7 +119,7 @@ function displayGiveaways(giveaways) {
   });
 }
 
-// Load winners
+// Load Winners
 async function loadWinners() {
   try {
     const response = await fetch(WINNERS_API);
@@ -145,7 +145,7 @@ displayWinners(recentWinners);
   }
 }
 
-// Display winners
+// Display Winners
 function displayWinners(winners) {
   if (!winners || winners.length === 0) {
     winnersContainer.innerHTML =       <div class="no-winners">         <p>No winners announced yet. Check back after our giveaways end!</p>       </div>    ;
@@ -155,14 +155,14 @@ function displayWinners(winners) {
   winnersContainer.innerHTML = winners.map(winner =>     <div class="winner-card">       <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(winner.username)}&background=4361ee&color=fff"             alt="${winner.username}" class="winner-avatar">       <h3 class="winner-name">${winner.username}</h3>       <p class="winner-prize">${winner.prize || 'Awesome Prize'}</p>       <p class="winner-date">Won on ${formatDate(winner.endDate)}</p>     </div>  ).join('');
 }
 
-// Open entry modal
+// Open Entry Modal
 function openEntryModal(giveawayId) {
   document.getElementById('giveaway-id').value = giveawayId;
   entryForm.reset();
   entryModal.style.display = 'block';
 }
 
-// Handle entry form submission
+// Handle Entry Submission
 async function handleEntrySubmit(e) {
   e.preventDefault();
 
@@ -205,8 +205,8 @@ if (response.ok) {
   }
 }
 
-// Format date
+// Format Date
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
-}
+      }
