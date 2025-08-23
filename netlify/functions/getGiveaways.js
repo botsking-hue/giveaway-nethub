@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import { getBlob } from '@netlify/blobs';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
@@ -10,8 +9,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    const giveawaysPath = path.join(process.cwd(), 'public', 'storage', 'giveaways.json');
-    const giveaways = JSON.parse(fs.readFileSync(giveawaysPath, 'utf8'));
+    const giveaways = await getBlob({
+      bucket: 'default',
+      key: 'giveaways',
+    });
 
     return {
       statusCode: 200,
@@ -23,4 +24,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-};
+}
