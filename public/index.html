@@ -1,174 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giveaway Hub - Win Amazing Prizes!</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giveaway Hub - Win Amazing Prizes!</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo">
-                    <h1>Giveaway<span>Hub</span></h1>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#giveaways">Giveaways</a></li>
-                    <li><a href="#winners">Winners</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="/admin096-dashboard" class="admin-btn">Admin</a></li>
-                </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </nav>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo">
+          <h1>Giveaway<span>Hub</span></h1>
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Win Amazing Prizes!</h2>
-                <p>Enter our giveaways for a chance to win incredible prizes. New contests added regularly!</p>
-                <a href="#giveaways" class="btn">View Giveaways</a>
-            </div>
-            <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" alt="Giveaway Prizes">
-            </div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#giveaways">Giveaways</a></li>
+          <li><a href="#winners">Winners</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="/admin096-dashboard" class="admin-btn">Admin</a></li>
+        </ul>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-    </section>
-
-    <!-- Giveaways Section -->
-    <section id="giveaways" class="giveaways">
-        <div class="container">
-            <h2 class="section-title">Current Giveaways</h2>
-            <div class="giveaways-grid" id="giveaways-container">
-                <!-- Giveaways will be loaded dynamically -->
-                <div class="loading">Loading giveaways...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Entry Modal -->
-    <div id="entry-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Enter Giveaway</h2>
-            <form id="entry-form">
-                <input type="hidden" id="giveaway-id">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" required>
-                </div>
-                <button type="submit" class="btn">Submit Entry</button>
-            </form>
-        </div>
+      </nav>
     </div>
+  </header>
 
-    <!-- Winners Section -->
-    <section id="winners" class="winners">
-        <div class="container">
-            <h2 class="section-title">Recent Winners</h2>
-            <div class="winners-grid" id="winners-container">
-                <!-- Winners will be loaded dynamically -->
-                <div class="loading">Loading winners...</div>
-            </div>
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h2>Win Amazing Prizes!</h2>
+        <p>Enter our giveaways for a chance to win incredible prizes. New contests added regularly!</p>
+        <a href="#giveaways" class="btn">View Giveaways</a>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1770&q=80" alt="Giveaway Prizes" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Giveaways Section -->
+  <section id="giveaways" class="giveaways">
+    <div class="container">
+      <h2 class="section-title">Current Giveaways</h2>
+      <div class="giveaways-grid" id="giveaways-container">
+        <div class="loading">Loading giveaways...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Entry Modal -->
+  <div id="entry-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Enter Giveaway</h2>
+      <form id="entry-form">
+        <input type="hidden" id="giveaway-id" />
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required />
         </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <div class="container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>How do I enter a giveaway?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Simply click on the "Enter Now" button for any active giveaway, fill out the entry form with your details, and submit. You'll receive a confirmation email once your entry is recorded.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>When are winners selected?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Winners are selected shortly after the giveaway end date. All winners are contacted via email and announced on our winners page.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>How many times can I enter?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Unless otherwise specified, you can enter each giveaway once per person. Additional entries won't increase your chances of winning.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Are there any age restrictions?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Most giveaways are open to participants 18 years or older. Some giveaways may have specific age requirements which will be listed in the giveaway details.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required />
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>GiveawayHub</h3>
-                    <p>Your destination for amazing giveaways and incredible prizes. Enter today for your chance to win!</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#giveaways">Giveaways</a></li>
-                        <li><a href="#winners">Winners</a></li>
-                        <li><a href="#faq">FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Connect With Us</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 GiveawayHub. All rights reserved.</p>
-            </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" required />
         </div>
-    </footer>
+        <button type="submit" class="btn">Submit Entry</button>
+      </form>
+    </div>
+  </div>
 
-    <script src="main.js"></script>
+  <!-- Winners Section -->
+  <section id="winners" class="winners">
+    <div class="container">
+      <h2 class="section-title">Recent Winners</h2>
+      <div class="winners-grid" id="winners-container">
+        <div class="loading">Loading winners...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="faq">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>How do I enter a giveaway?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+              <p>Click "Enter Now" on any active giveaway, fill out the form, and submit. You'll receive a confirmation email once your entry is recorded.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>When are winners selected?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Winners are selected shortly after the giveaway ends. They’re contacted via email and announced on our winners page.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>How many times can I enter?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Unless stated otherwise, you can enter once per giveaway. Multiple entries won’t increase your chances.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>Are there any age restrictions?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Most giveaways are open to participants 18+. Specific age requirements will be listed in the giveaway details.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">↑</button>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>GiveawayHub</h3>
+          <p>Your destination for amazing giveaways and incredible prizes. Enter today for your chance to win!</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#giveaways">Giveaways</a></li>
+            <li><a href="#winners">Winners</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Connect With Us</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 GiveawayHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="main.js" defer></script>
+  <script>
+    // Scroll to top button
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+    });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(question => {
+  question.addEventListener('click', () => {
+    question.parentElement.classList.toggle('active');
+  });
+});
+
+
+  </script>
 </body>
-  </html>
+        </html>
