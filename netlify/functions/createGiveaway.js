@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import { getBlob, setBlob } from '@netlify/blobs';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -10,12 +9,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const giveawaysPath = path.join(process.cwd(), 'public', 'storage', 'giveaways.json');
-    const giveaways = JSON.parse(fs.readFileSync(giveawaysPath, 'utf8'));
-    
     const newGiveaway = JSON.parse(event.body);
     const giveawayId = `giveaway-${Date.now()}`;
-    
+
+    // Load existing giveaways from blob
+    const giveaways = await getBlob({ bucket: 'default', key: 'giveaways' });
+
     // Add new giveaway
     giveaways.push({
       ...newGiveaway,
@@ -24,8 +23,12 @@ exports.handler = async (event) => {
       updatedAt: new Date().toISOString(),
     });
 
-    // Write back to file
-    fs.writeFileSync(giveawaysPath, JSON.stringify(giveaways, null, 2));
+    // Save updated giveaways back to blob
+    await setBlob({
+      bucket: 'default',
+      key: 'giveaways',
+      body: JSON.stringify(giveaways, null, 2),
+    });
 
     return {
       statusCode: 200,
@@ -41,4 +44,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-};
+}
