@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import { getBlob } from '@netlify/blobs';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
@@ -10,13 +9,16 @@ exports.handler = async (event) => {
   }
 
   try {
-    const entriesPath = path.join(process.cwd(), 'public', 'storage', 'entries.json');
-    const entries = JSON.parse(fs.readFileSync(entriesPath, 'utf8'));
-    
     const { giveawayId } = event.queryStringParameters || {};
-    
+
+    // Fetch entries from blob storage
+    const entries = await getBlob({
+      bucket: 'default',
+      key: 'entries',
+    });
+
     // Filter by giveawayId if provided
-    const filteredEntries = giveawayId 
+    const filteredEntries = giveawayId
       ? entries.filter(entry => entry.giveawayId === giveawayId)
       : entries;
 
@@ -30,4 +32,4 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: error.message }),
     };
   }
-};
+        }
