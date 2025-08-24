@@ -1,24 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCvJqST6D_rUJhlMk7He9B2iQqsDnXTvNk",
-  authDomain: "giveaway-app-69b8f.firebaseapp.com",
-  projectId: "giveaway-app-69b8f",
-  storageBucket: "giveaway-app-69b8f.firebasestorage.app",
-  messagingSenderId: "622768665857",
-  appId: "1:622768665857:web:fda9de620a830c42031700"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 // DOM Elements
 const giveawaysContainer = document.getElementById('giveaways-container');
 const winnersContainer = document.getElementById('winners-container');
@@ -29,6 +8,13 @@ const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 const faqItems = document.querySelectorAll('.faq-item');
 
+// Get Firebase modules from global scope
+const { 
+  collection, addDoc, getDocs, query, orderBy, where, limit, 
+  serverTimestamp, Timestamp 
+} = window.firebaseModules;
+const db = window.db;
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadGiveaways();
@@ -36,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 });
 
-// Event Listeners
+// Event Listeners (unchanged)
 function setupEventListeners() {
   hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('active');
@@ -79,14 +65,16 @@ function setupEventListeners() {
   });
 }
 
-// Load Giveaways from Firebase
+// Load Giveaways with Firebase (modular version)
 async function loadGiveaways() {
   try {
-    const snapshot = await db.collection('giveaways')
-      .where('status', 'in', ['active', 'upcoming'])
-      .orderBy('endDate', 'asc')
-      .get();
+    const q = query(
+      collection(db, 'giveaways'),
+      where('status', 'in', ['active', 'upcoming']),
+      orderBy('endDate', 'asc')
+    );
     
+    const snapshot = await getDocs(q);
     const giveaways = [];
     snapshot.forEach(doc => {
       giveaways.push({ id: doc.id, ...doc.data() });
@@ -103,7 +91,7 @@ async function loadGiveaways() {
   }
 }
 
-// Display Giveaways
+// Display Giveaways (unchanged)
 function displayGiveaways(giveaways) {
   if (!giveaways || giveaways.length === 0) {
     giveawaysContainer.innerHTML = `
@@ -116,13 +104,13 @@ function displayGiveaways(giveaways) {
 
   giveawaysContainer.innerHTML = giveaways.map(giveaway => `
     <div class="giveaway-card">
-      <img src="${giveaway.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1770&q=80'}" 
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1770&q=80" 
            alt="${giveaway.title}" class="giveaway-image">
       <div class="giveaway-content">
         <h3 class="giveaway-title">${giveaway.title}</h3>
         <p class="giveaway-prize">Prize: ${giveaway.prize}</p>
         <div class="giveaway-meta">
-          <span>Ends: ${formatDate(giveaway.endDate)}</span>
+          <span>Ends: ${formatDate(giveaway.endDate?.toDate ? giveaway.endDate.toDate() : new Date(giveaway.endDate))}</span>
           <span class="status status-${giveaway.status}">${giveaway.status}</span>
         </div>
         <p class="giveaway-description">${giveaway.description}</p>
@@ -142,30 +130,48 @@ function displayGiveaways(giveaways) {
   });
 }
 
-// Load Winners from Firebase
+// Load Winners with Firebase (modular version)
 async function loadWinners() {
   try {
-    const snapshot = await db.collection('winners')
-      .orderBy('winDate', 'desc')
-      .limit(6)
-      .get();
+    const q = query(
+      collection(db, 'winners'),
+      orderBy('drawnAt', 'desc'),
+      limit(6)
+    );
     
+    const snapshot = await getDocs(q);
     const winners = [];
     snapshot.forEach(doc => {
-      winners.push({ id: doc.id, ...doc.data() });
+      const data = doc.data();
+      data.winners.forEach(winner => {
+        winners.push({
+          ...winner,
+          giveawayTitle: data.giveawayId,
+          endDate: data.drawnAt
+        });
+      });
     });
     
-    displayWinners(winners);
+    const recentWinners = winners.slice(0, 6);
+    displayWinners(recentWinners);
   } catch (error) {
     console.error('Error loading winners:', error);
-    winnersContainer.innerHTML = `<div class="error-message"><p>Failed to load winners. Please try again later.</p></div>`;
+    winnersContainer.innerHTML = `
+      <div class="error-message">
+        <p>Failed to load winners. Please try again later.</p>
+      </div>
+    `;
   }
 }
 
-// Display Winners
+// Display Winners (unchanged)
 function displayWinners(winners) {
   if (!winners || winners.length === 0) {
-    winnersContainer.innerHTML = `<div class="no-winners"><p>No winners announced yet. Check back after our giveaways end!</p></div>`;
+    winnersContainer.innerHTML = `
+      <div class="no-winners">
+        <p>No winners announced yet. Check back after our giveaways end!</p>
+      </div>
+    `;
     return;
   }
 
@@ -175,19 +181,19 @@ function displayWinners(winners) {
            alt="${winner.username}" class="winner-avatar">
       <h3 class="winner-name">${winner.username}</h3>
       <p class="winner-prize">${winner.prize || 'Awesome Prize'}</p>
-      <p class="winner-date">Won on ${formatDate(winner.winDate)}</p>
+      <p class="winner-date">Won on ${formatDate(winner.endDate?.toDate ? winner.endDate.toDate() : new Date(winner.endDate))}</p>
     </div>
   `).join('');
 }
 
-// Open Entry Modal
+// Open Entry Modal (unchanged)
 function openEntryModal(giveawayId) {
   document.getElementById('giveaway-id').value = giveawayId;
   entryForm.reset();
   entryModal.style.display = 'block';
 }
 
-// Handle Entry Submission to Firebase
+// Handle Entry Submission with Firebase (modular version)
 async function handleEntrySubmit(e) {
   e.preventDefault();
 
@@ -199,16 +205,14 @@ async function handleEntrySubmit(e) {
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
     username: document.getElementById('username').value,
-    entryDate: new Date().toISOString()
+    createdAt: serverTimestamp()
   };
 
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting...';
 
   try {
-    // Add entry to Firebase
-    await db.collection('entries').add(entryData);
-    
+    await addDoc(collection(db, 'entries'), entryData);
     alert('Entry submitted successfully! Good luck!');
     entryModal.style.display = 'none';
     entryForm.reset();
@@ -221,8 +225,10 @@ async function handleEntrySubmit(e) {
   }
 }
 
-// Format Date
-function formatDate(dateString) {
+// Format Date (unchanged)
+function formatDate(date) {
+  if (!date) return 'Date not available';
+  
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-}
+  return new Date(date).toLocaleDateString(undefined, options);
+    }
