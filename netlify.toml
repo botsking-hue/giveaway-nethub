@@ -1,9 +1,7 @@
 [build]
-  command = "echo 'Static site — no build step required'"
   publish = "public"
-  functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/*"
+  to = "/index.html"
   status = 200
