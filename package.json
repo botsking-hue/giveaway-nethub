@@ -1,24 +1,14 @@
 {
-  "name": "giveaway-nethub",
+  "name": "giveaway-dashboard",
   "version": "1.0.0",
-  "description": "Matrix-themed giveaway system powered by Netlify Blobs",
+  "description": "Frontend dashboard for giveaways using Firebase",
   "scripts": {
-    "dev": "netlify dev",
-    "build": "echo 'Static site — no build step required'",
     "start": "netlify dev"
   },
   "dependencies": {
-    "uuid": "^9.0.0"
+    "firebase": "^10.0.0"
   },
-  "devDependencies": {},
-  "keywords": [
-    "netlify",
-    "giveaway",
-    "blobs",
-    "matrix",
-    "static-site",
-    "serverless"
-  ],
-  "author": "Joel",
-  "license": "MIT"
+  "devDependencies": {
+    "netlify-cli": "^15.0.0"
+  }
 }
