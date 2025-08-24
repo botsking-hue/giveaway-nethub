@@ -194,5 +194,32 @@ document.querySelectorAll('.faq-question').forEach(question => {
 
 
   </script>
+  <!-- Replace the old script tags with these -->
+<script type="module">
+  // Import the functions you need from the SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, orderBy, where, limit, serverTimestamp, query, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
+    authDomain: "giveaway-app-69b8f.firebaseapp.com",
+    projectId: "giveaway-app-69b8f",
+    storageBucket: "giveaway-app-69b8f.appspot.com",
+    messagingSenderId: "622768665857",
+    appId: "1:622768665857:web:fda9de620a830c42031700" // Replace with your actual app ID
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Make these available globally (or restructure your code to be modular)
+  window.db = db;
+  window.firebaseModules = {
+    collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
+    orderBy, where, limit, serverTimestamp, query, Timestamp
+  };
+</script>
 </body>
         </html>
