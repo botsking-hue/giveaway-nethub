@@ -6,6 +6,36 @@
   <title>Giveaway Hub - Win Amazing Prizes!</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Firebase SDK as ES Module -->
+  <script type="module">
+    // Import the functions you need from the SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, orderBy, where, limit, serverTimestamp, query, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
+      authDomain: "giveaway-app-69b8f.firebaseapp.com",
+      projectId: "giveaway-app-69b8f",
+      storageBucket: "giveaway-app-69b8f.appspot.com",
+      messagingSenderId: "622768665857",
+      appId: "1:622768665857:web:fda9de620a830c42031700"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Make these available globally
+    window.db = db;
+    window.firebaseModules = {
+      collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
+      orderBy, where, limit, serverTimestamp, query, Timestamp
+    };
+    
+    console.log("Firebase initialized successfully!");
+  </script>
 </head>
 <body>
   <!-- Header -->
@@ -109,7 +139,7 @@
             <i class="fas fa-chevron-down"></i>
           </div>
           <div class="faq-answer">
-            <p>Winners are selected shortly after the giveaway ends. They’re contacted via email and announced on our winners page.</p>
+            <p>Winners are selected shortly after the giveaway ends. They're contacted via email and announced on our winners page.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -118,7 +148,7 @@
             <i class="fas fa-chevron-down"></i>
           </div>
           <div class="faq-answer">
-            <p>Unless stated otherwise, you can enter once per giveaway. Multiple entries won’t increase your chances.</p>
+            <p>Unless stated otherwise, you can enter once per giveaway. Multiple entries won't increase your chances.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -171,10 +201,6 @@
   </footer>
 
   <!-- Scripts -->
-  <!-- Add to the head section of your admin HTML files -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="main.js" defer></script>
   <script>
     // Scroll to top button
@@ -185,41 +211,13 @@
     scrollTopBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-// FAQ accordion
-document.querySelectorAll('.faq-question').forEach(question => {
-  question.addEventListener('click', () => {
-    question.parentElement.classList.toggle('active');
-  });
-});
 
-
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        question.parentElement.classList.toggle('active');
+      });
+    });
   </script>
-  <!-- Replace the old script tags with these -->
-<script type="module">
-  // Import the functions you need from the SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, orderBy, where, limit, serverTimestamp, query, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
-    authDomain: "giveaway-app-69b8f.firebaseapp.com",
-    projectId: "giveaway-app-69b8f",
-    storageBucket: "giveaway-app-69b8f.appspot.com",
-    messagingSenderId: "622768665857",
-    appId: "1:622768665857:web:fda9de620a830c42031700" // Replace with your actual app ID
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Make these available globally (or restructure your code to be modular)
-  window.db = db;
-  window.firebaseModules = {
-    collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
-    orderBy, where, limit, serverTimestamp, query, Timestamp
-  };
-</script>
 </body>
-        </html>
+  </html>
