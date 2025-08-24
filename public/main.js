@@ -1,14 +1,20 @@
-// Firebase configuration and initialization
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  // Replace with your Firebase project config
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCvJqST6D_rUJhlMk7He9B2iQqsDnXTvNk",
+  authDomain: "giveaway-app-69b8f.firebaseapp.com",
+  projectId: "giveaway-app-69b8f",
+  storageBucket: "giveaway-app-69b8f.firebasestorage.app",
+  messagingSenderId: "622768665857",
+  appId: "1:622768665857:web:fda9de620a830c42031700"
 };
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
