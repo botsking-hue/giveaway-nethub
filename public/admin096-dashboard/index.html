@@ -1,227 +1,284 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Giveaway Hub - Win Amazing Prizes!</title>
+  <title>Giveaway Hub - Admin Dashboard</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body>
-  <!-- Header -->
-  <header class="header">
+<body class="admin-dashboard">
+  <!-- Admin Header -->
+  <header class="admin-header">
     <div class="container">
-      <nav class="navbar">
+      <nav class="admin-nav">
         <div class="logo">
-          <h1>Giveaway<span>Hub</span></h1>
+          <h1>Giveaway<span>Hub</span> Admin</h1>
         </div>
-        <ul class="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#giveaways">Giveaways</a></li>
-          <li><a href="#winners">Winners</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="/admin096-dashboard" class="admin-btn">Admin</a></li>
-        </ul>
-        <div class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="admin-actions">
+          <button class="btn btn-primary" onclick="openGiveawayModal()">
+            <i class="fas fa-plus"></i> New Giveaway
+          </button>
+          <button class="btn btn-secondary" onclick="exportData()">
+            <i class="fas fa-download"></i> Export Data
+          </button>
+          <a href="/" class="btn btn-light">
+            <i class="fas fa-home"></i> Back to Site
+          </a>
         </div>
       </nav>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section id="home" class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h2>Win Amazing Prizes!</h2>
-        <p>Enter our giveaways for a chance to win incredible prizes. New contests added regularly!</p>
-        <a href="#giveaways" class="btn">View Giveaways</a>
-      </div>
-      <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1770&q=80" alt="Giveaway Prizes" />
-      </div>
-    </div>
-  </section>
+  <!-- Admin Main Content -->
+  <div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <ul class="admin-menu">
+        <li class="nav-item active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </li>
+        <li class="nav-item" data-section="giveaways">
+          <i class="fas fa-gift"></i> Giveaways
+        </li>
+        <li class="nav-item" data-section="entries">
+          <i class="fas fa-ticket-alt"></i> Entries
+        </li>
+        <li class="nav-item" data-section="winners">
+          <i class="fas fa-trophy"></i> Winners
+        </li>
+        <li class="nav-item" data-section="analytics">
+          <i class="fas fa-chart-bar"></i> Analytics
+        </li>
+        <li class="nav-item" data-section="settings">
+          <i class="fas fa-cog"></i> Settings
+        </li>
+      </ul>
+    </aside>
 
-  <!-- Giveaways Section -->
-  <section id="giveaways" class="giveaways">
-    <div class="container">
-      <h2 class="section-title">Current Giveaways</h2>
-      <div class="giveaways-grid" id="giveaways-container">
-        <div class="loading">Loading giveaways...</div>
-      </div>
-    </div>
-  </section>
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <div class="admin-content">
+        <h2 id="section-title" class="section-title">Dashboard</h2>
+        
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-gift"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="total-giveaways">0</h3>
+                <p>Total Giveaways</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-ticket-alt"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="total-entries">0</h3>
+                <p>Total Entries</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="total-winners">0</h3>
+                <p>Total Winners</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <h3 id="active-giveaways">0</h3>
+                <p>Active Giveaways</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-list" id="recent-activity">
+              <p>Loading recent activity...</p>
+            </div>
+          </div>
+        </section>
 
-  <!-- Entry Modal -->
-  <div id="entry-modal" class="modal">
+        <!-- Giveaways Section -->
+        <section id="giveaways-section" class="content-section">
+          <div class="section-header">
+            <h3>Manage Giveaways</h3>
+            <div class="section-controls">
+              <select id="status-filter">
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="ended">Ended</option>
+              </select>
+              <input type="text" id="search-giveaways" placeholder="Search giveaways...">
+            </div>
+          </div>
+          <div class="giveaways-list" id="giveaways-list">
+            <p>Loading giveaways...</p>
+          </div>
+        </section>
+
+        <!-- Entries Section -->
+        <section id="entries-section" class="content-section">
+          <div class="section-header">
+            <h3>All Entries</h3>
+            <div class="section-controls">
+              <select id="giveaway-filter">
+                <option value="all">All Giveaways</option>
+                <!-- Will be populated dynamically -->
+              </select>
+            </div>
+          </div>
+          <div class="entries-table">
+            <div class="table-header">
+              <span>Name</span>
+              <span>Email</span>
+              <span>Giveaway</span>
+              <span>Entry Date</span>
+            </div>
+            <div class="table-body" id="entries-list">
+              <p>Loading entries...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Winners Section -->
+        <section id="winners-section" class="content-section">
+          <div class="section-header">
+            <h3>Winner Management</h3>
+            <div class="section-controls">
+              <select id="pick-giveaway">
+                <option value="">Select Giveaway</option>
+                <!-- Will be populated dynamically -->
+              </select>
+              <input type="number" id="winners-count" placeholder="Winners count" min="1" value="1">
+              <button class="btn btn-primary" onclick="pickWinners()">Pick Winners</button>
+            </div>
+          </div>
+          <div class="winners-list" id="winners-list">
+            <p>No winners selected yet.</p>
+          </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics-section" class="content-section">
+          <h3>Giveaway Analytics</h3>
+          <div class="analytics-content" id="analytics-content">
+            <p>Analytics data will be displayed here.</p>
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings-section" class="content-section">
+          <h3>Admin Settings</h3>
+          <div class="settings-form">
+            <div class="form-group">
+              <label>Site Title</label>
+              <input type="text" value="GiveawayHub">
+            </div>
+            <div class="form-group">
+              <label>Admin Email</label>
+              <input type="email" value="admin@giveawayhub.com">
+            </div>
+            <div class="form-group">
+              <label>Winners Notification</label>
+              <select>
+                <option>Enable</option>
+                <option>Disable</option>
+              </select>
+            </div>
+            <button class="btn btn-primary">Save Settings</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Giveaway Modal -->
+  <div id="giveaway-modal" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Enter Giveaway</h2>
-      <form id="entry-form">
-        <input type="hidden" id="giveaway-id" />
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modal-title">Create New Giveaway</h2>
+      <form id="giveaway-form">
+        <input type="hidden" id="giveaway-id">
         <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" required />
+          <label for="giveaway-title">Giveaway Title</label>
+          <input type="text" id="giveaway-title" required>
         </div>
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" required />
+          <label for="giveaway-description">Description</label>
+          <textarea id="giveaway-description" rows="3" required></textarea>
         </div>
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" required />
+          <label for="giveaway-prize">Prize</label>
+          <input type="text" id="giveaway-prize" required>
         </div>
-        <button type="submit" class="btn">Submit Entry</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="giveaway-start">Start Date</label>
+            <input type="datetime-local" id="giveaway-start" required>
+          </div>
+          <div class="form-group">
+            <label for="giveaway-end">End Date</label>
+            <input type="datetime-local" id="giveaway-end" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="giveaway-winners">Number of Winners</label>
+            <input type="number" id="giveaway-winners" min="1" value="1" required>
+          </div>
+          <div class="form-group">
+            <label for="giveaway-status">Status</label>
+            <select id="giveaway-status" required>
+              <option value="active">Active</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="ended">Ended</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Giveaway</button>
       </form>
     </div>
   </div>
 
-  <!-- Winners Section -->
-  <section id="winners" class="winners">
-    <div class="container">
-      <h2 class="section-title">Recent Winners</h2>
-      <div class="winners-grid" id="winners-container">
-        <div class="loading">Loading winners...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section id="faq" class="faq">
-    <div class="container">
-      <h2 class="section-title">Frequently Asked Questions</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-question">
-            <h3>How do I enter a giveaway?</h3>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>Click "Enter Now" on any active giveaway, fill out the form, and submit. You'll receive a confirmation email once your entry is recorded.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
-            <h3>When are winners selected?</h3>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>Winners are selected shortly after the giveaway ends. They're contacted via email and announced on our winners page.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
-            <h3>How many times can I enter?</h3>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>Unless stated otherwise, you can enter once per giveaway. Multiple entries won't increase your chances.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">
-            <h3>Are there any age restrictions?</h3>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>Most giveaways are open to participants 18+. Specific age requirements will be listed in the giveaway details.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Scroll to Top Button -->
-  <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">↑</button>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>GiveawayHub</h3>
-          <p>Your destination for amazing giveaways and incredible prizes. Enter today for your chance to win!</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#giveaways">Giveaways</a></li>
-            <li><a href="#winners">Winners</a></li>
-            <li><a href="#faq">FAQ</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3>Connect With Us</h3>
-          <div class="social-icons">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2025 GiveawayHub. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
-  <!-- Your Custom Scripts -->
+  <!-- Admin JavaScript -->
   <script src="admin.js"></script>
   
-  <!-- Inline Scripts -->
+  <!-- Firebase Initialization -->
   <script>
-    // Scroll to top button
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-      scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
-    });
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
+      authDomain: "giveaway-app-69b8f.firebaseapp.com",
+      projectId: "giveaway-app-69b8f",
+      storageBucket: "giveaway-app-69b8f.appspot.com",
+      messagingSenderId: "622768665857",
+      appId: "1:622768665857:web:fda9de620a830c42031700"
+    };
 
-    // FAQ accordion
-    document.querySelectorAll('.faq-question').forEach(question => {
-      question.addEventListener('click', () => {
-        question.parentElement.classList.toggle('active');
-      });
-    });
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Make db available globally
+    window.db = db;
   </script>
-  <!-- Replace the old script tags with these -->
-<script type="module">
-  // Import the functions you need from the SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, orderBy, where, limit, serverTimestamp, query, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
-    authDomain: "giveaway-app-69b8f.firebaseapp.com",
-    projectId: "giveaway-app-69b8f",
-    storageBucket: "giveaway-app-69b8f.appspot.com",
-    messagingSenderId: "622768665857",
-    appId: "1:622768665857:web:fda9de620a830c42031700" // Replace with your actual app ID
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Make these available globally (or restructure your code to be modular)
-  window.db = db;
-  window.firebaseModules = {
-    collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
-    orderBy, where, limit, serverTimestamp, query, Timestamp
-  };
-    </script>
 </body>
-        </html>
+          </html>
