@@ -1,18 +1,11 @@
-// Firebase configuration and initialization
-const firebaseConfig = {
-  apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
-  authDomain: "giveaway-app-69b8f.firebaseapp.com",
-  projectId: "giveaway-app-69b8f",
-  storageBucket: "giveaway-app-69b8f.appspot.com",
-  messagingSenderId: "622768665857",
-  appId: "1:622768665857:web:fda9de620a830c42031700" // Replace with your actual app ID from Firebase console
-};
+// Get Firebase modules from global scope
+const { 
+  collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
+  query, orderBy, where, limit, serverTimestamp, Timestamp 
+} = window.firebaseModules;
+const db = window.db;
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Section switching
+// Section switching (unchanged)
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -44,18 +37,16 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// Modal logic
+// Modal logic (unchanged)
 function openGiveawayModal(giveawayId = null) {
   document.getElementById('giveaway-modal').style.display = 'block';
   document.getElementById('giveaway-form').reset();
   
   if (giveawayId) {
-    // Editing existing giveaway
     document.getElementById('modal-title').textContent = 'Edit Giveaway';
     document.getElementById('giveaway-id').value = giveawayId;
     loadGiveawayData(giveawayId);
   } else {
-    // Creating new giveaway
     document.getElementById('modal-title').textContent = 'Create New Giveaway';
     document.getElementById('giveaway-id').value = '';
   }
@@ -71,17 +62,18 @@ window.addEventListener('click', e => {
   }
 });
 
-// Load giveaway data for editing
+// Load giveaway data for editing (modular version)
 async function loadGiveawayData(giveawayId) {
   try {
-    const doc = await db.collection('giveaways').doc(giveawayId).get();
-    if (doc.exists) {
-      const data = doc.data();
+    const docRef = doc(db, 'giveaways', giveawayId);
+    const docSnap = await getDocs(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
       document.getElementById('giveaway-title').value = data.title;
       document.getElementById('giveaway-description').value = data.description;
       document.getElementById('giveaway-prize').value = data.prize;
       
-      // Format dates for input fields (YYYY-MM-DD)
       if (data.startDate && data.startDate.toDate) {
         document.getElementById('giveaway-start').value = formatDateForInput(data.startDate.toDate());
       }
@@ -102,7 +94,7 @@ function formatDateForInput(date) {
   return date.toISOString().split('T')[0];
 }
 
-// Form submission
+// Form submission (modular version)
 document.getElementById('giveaway-form').addEventListener('submit', async e => {
   e.preventDefault();
 
@@ -111,44 +103,43 @@ document.getElementById('giveaway-form').addEventListener('submit', async e => {
     title: document.getElementById('giveaway-title').value,
     description: document.getElementById('giveaway-description').value,
     prize: document.getElementById('giveaway-prize').value,
-    startDate: firebase.firestore.Timestamp.fromDate(new Date(document.getElementById('giveaway-start').value)),
-    endDate: firebase.firestore.Timestamp.fromDate(new Date(document.getElementById('giveaway-end').value)),
+    startDate: Timestamp.fromDate(new Date(document.getElementById('giveaway-start').value)),
+    endDate: Timestamp.fromDate(new Date(document.getElementById('giveaway-end').value)),
     numberOfWinners: parseInt(document.getElementById('giveaway-winners').value),
     status: document.getElementById('giveaway-status').value,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    updatedAt: serverTimestamp()
   };
 
-  // Add createdAt for new giveaways
   if (!giveawayId) {
-    giveaway.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    giveaway.createdAt = serverTimestamp();
   }
 
   try {
     if (giveawayId) {
-      // Update existing giveaway
-      await db.collection('giveaways').doc(giveawayId).update(giveaway);
+      await updateDoc(doc(db, 'giveaways', giveawayId), giveaway);
       alert('Giveaway updated successfully!');
     } else {
-      // Create new giveaway
-      await db.collection('giveaways').add(giveaway);
+      await addDoc(collection(db, 'giveaways'), giveaway);
       alert('Giveaway created successfully!');
     }
     
     closeModal();
-    loadGiveaways(); // Refresh the list
+    loadGiveaways();
   } catch (error) {
     console.error('Error saving giveaway:', error);
     alert('Something went wrong. Please try again.');
   }
 });
 
-// Load giveaways for management
+// Load giveaways for management (modular version)
 async function loadGiveaways() {
   try {
-    const snapshot = await db.collection('giveaways')
-      .orderBy('createdAt', 'desc')
-      .get();
+    const q = query(
+      collection(db, 'giveaways'),
+      orderBy('createdAt', 'desc')
+    );
     
+    const snapshot = await getDocs(q);
     const giveaways = [];
     snapshot.forEach(doc => {
       giveaways.push({ id: doc.id, ...doc.data() });
@@ -165,7 +156,7 @@ async function loadGiveaways() {
   }
 }
 
-// Display giveaways in admin panel
+// Display giveaways in admin panel (unchanged)
 function displayGiveaways(giveaways) {
   const giveawaysList = document.getElementById('giveaways-list');
   
@@ -203,45 +194,47 @@ function displayGiveaways(giveaways) {
   `).join('');
 }
 
-// Delete a giveaway
+// Delete a giveaway (modular version)
 async function deleteGiveaway(giveawayId) {
   if (!confirm('Are you sure you want to delete this giveaway? This action cannot be undone.')) {
     return;
   }
 
   try {
-    await db.collection('giveaways').doc(giveawayId).delete();
+    await deleteDoc(doc(db, 'giveaways', giveawayId));
     alert('Giveaway deleted successfully!');
-    loadGiveaways(); // Refresh the list
+    loadGiveaways();
   } catch (error) {
     console.error('Error deleting giveaway:', error);
     alert('Failed to delete giveaway.');
   }
 }
 
-// End a giveaway early
+// End a giveaway early (modular version)
 async function endGiveaway(giveawayId) {
   try {
-    await db.collection('giveaways').doc(giveawayId).update({
+    await updateDoc(doc(db, 'giveaways', giveawayId), {
       status: 'ended',
-      endDate: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      endDate: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
     alert('Giveaway ended successfully!');
-    loadGiveaways(); // Refresh the list
+    loadGiveaways();
   } catch (error) {
     console.error('Error ending giveaway:', error);
     alert('Failed to end giveaway.');
   }
 }
 
-// Load winners list for admin view
+// Load winners list for admin view (modular version)
 async function loadWinnersList() {
   try {
-    const snapshot = await db.collection('winners')
-      .orderBy('drawnAt', 'desc')
-      .get();
+    const q = query(
+      collection(db, 'winners'),
+      orderBy('drawnAt', 'desc')
+    );
     
+    const snapshot = await getDocs(q);
     const winnersList = [];
     snapshot.forEach(doc => {
       winnersList.push({ id: doc.id, ...doc.data() });
@@ -258,7 +251,7 @@ async function loadWinnersList() {
   }
 }
 
-// Display winners in admin panel
+// Display winners in admin panel (unchanged)
 function displayWinnersList(winners) {
   const winnersContainer = document.getElementById('winners-list');
   
@@ -288,14 +281,16 @@ function displayWinnersList(winners) {
   `).join('');
 }
 
-// Load entries for admin view
+// Load entries for admin view (modular version)
 async function loadEntries() {
   try {
-    const snapshot = await db.collection('entries')
-      .orderBy('createdAt', 'desc')
-      .limit(100)
-      .get();
+    const q = query(
+      collection(db, 'entries'),
+      orderBy('createdAt', 'desc'),
+      limit(100)
+    );
     
+    const snapshot = await getDocs(q);
     const entries = [];
     snapshot.forEach(doc => {
       entries.push({ id: doc.id, ...doc.data() });
@@ -312,7 +307,7 @@ async function loadEntries() {
   }
 }
 
-// Display entries in admin panel
+// Display entries in admin panel (unchanged)
 function displayEntries(entries) {
   const entriesContainer = document.getElementById('entries-list');
   
@@ -343,25 +338,27 @@ function displayEntries(entries) {
   `;
 }
 
-// Load analytics data
+// Load analytics data (modular version)
 async function loadAnalytics() {
   try {
     // Get total giveaways count
-    const giveawaysSnapshot = await db.collection('giveaways').get();
+    const giveawaysSnapshot = await getDocs(collection(db, 'giveaways'));
     const totalGiveaways = giveawaysSnapshot.size;
     
     // Get total entries count
-    const entriesSnapshot = await db.collection('entries').get();
+    const entriesSnapshot = await getDocs(collection(db, 'entries'));
     const totalEntries = entriesSnapshot.size;
     
     // Get active giveaways count
-    const activeGiveawaysSnapshot = await db.collection('giveaways')
-      .where('status', '==', 'active')
-      .get();
+    const activeGiveawaysQuery = query(
+      collection(db, 'giveaways'),
+      where('status', '==', 'active')
+    );
+    const activeGiveawaysSnapshot = await getDocs(activeGiveawaysQuery);
     const activeGiveaways = activeGiveawaysSnapshot.size;
     
     // Get winners count
-    const winnersSnapshot = await db.collection('winners').get();
+    const winnersSnapshot = await getDocs(collection(db, 'winners'));
     let totalWinners = 0;
     winnersSnapshot.forEach(doc => {
       totalWinners += doc.data().winners.length;
@@ -383,15 +380,14 @@ async function loadAnalytics() {
   }
 }
 
-// Pick winners functionality
+// Pick winners functionality (unchanged)
 function selectGiveawayForWinners(giveawayId) {
   document.getElementById('pick-giveaway').value = giveawayId;
   
-  // Try to get the number of winners from the giveaway
-  db.collection('giveaways').doc(giveawayId).get()
-    .then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
+  getDocs(doc(db, 'giveaways', giveawayId))
+    .then(docSnap => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
         document.getElementById('winners-count').value = data.numberOfWinners;
       }
     })
@@ -400,7 +396,7 @@ function selectGiveawayForWinners(giveawayId) {
     });
 }
 
-// Pick winners
+// Pick winners (modular version)
 async function pickWinners() {
   const giveawayId = document.getElementById('pick-giveaway').value;
   const count = parseInt(document.getElementById('winners-count').value);
@@ -411,19 +407,19 @@ async function pickWinners() {
   }
 
   try {
-    // Get the giveaway details
-    const giveawayDoc = await db.collection('giveaways').doc(giveawayId).get();
-    if (!giveawayDoc.exists) {
+    const giveawayDoc = await getDocs(doc(db, 'giveaways', giveawayId));
+    if (!giveawayDoc.exists()) {
       alert('Giveaway not found.');
       return;
     }
     
     const giveaway = giveawayDoc.data();
     
-    // Get all entries for this giveaway
-    const entriesSnapshot = await db.collection('entries')
-      .where('giveawayId', '==', giveawayId)
-      .get();
+    const entriesQuery = query(
+      collection(db, 'entries'),
+      where('giveawayId', '==', giveawayId)
+    );
+    const entriesSnapshot = await getDocs(entriesQuery);
     
     const entries = [];
     entriesSnapshot.forEach(doc => {
@@ -441,7 +437,6 @@ async function pickWinners() {
       }
     }
     
-    // Random selection algorithm
     const winners = [];
     const availableEntries = [...entries];
     const actualCount = Math.min(count, entries.length);
@@ -452,7 +447,6 @@ async function pickWinners() {
       availableEntries.splice(randomIndex, 1);
     }
     
-    // Save winners to Firestore
     const winnerLog = {
       giveawayId,
       giveawayTitle: giveaway.title,
@@ -463,22 +457,19 @@ async function pickWinners() {
         name: winner.name,
         prize: giveaway.prize
       })),
-      drawnAt: firebase.firestore.FieldValue.serverTimestamp()
+      drawnAt: serverTimestamp()
     };
     
-    await db.collection('winners').add(winnerLog);
+    await addDoc(collection(db, 'winners'), winnerLog);
     
-    // Update giveaway status to ended if not already
     if (giveaway.status !== 'ended') {
-      await db.collection('giveaways').doc(giveawayId).update({
+      await updateDoc(doc(db, 'giveaways', giveawayId), {
         status: 'ended',
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: serverTimestamp()
       });
     }
     
     alert(`Winners selected successfully: ${winners.map(w => w.username).join(', ')}`);
-    
-    // Refresh the winners list
     loadWinnersList();
     
   } catch (error) {
@@ -487,12 +478,12 @@ async function pickWinners() {
   }
 }
 
-// Export data
+// Export data (unchanged)
 function exportData() {
   alert('Export functionality would be implemented here. This would typically generate a CSV or Excel file of the data.');
 }
 
-// Format Date for display
+// Format Date for display (unchanged)
 function formatDate(date) {
   if (!date) return 'Date not available';
   
@@ -500,15 +491,13 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString(undefined, options);
 }
 
-// Optional: filter/search hooks
+// Optional: filter/search hooks (unchanged)
 document.getElementById('status-filter')?.addEventListener('change', () => {
   // Filter giveaways by status
-  // This would require additional implementation
 });
 
 document.getElementById('search-giveaways')?.addEventListener('input', () => {
   // Search giveaways by title
-  // This would require additional implementation
 });
 
 // Initialize the admin panel with giveaways loaded by default
