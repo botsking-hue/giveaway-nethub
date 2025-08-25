@@ -5,7 +5,7 @@ const {
 } = window.firebaseModules;
 const db = window.db;
 
-// Section switching (unchanged)
+// Section switching
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -37,7 +37,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// Modal logic (unchanged)
+// Modal logic
 function openGiveawayModal(giveawayId = null) {
   document.getElementById('giveaway-modal').style.display = 'block';
   document.getElementById('giveaway-form').reset();
@@ -62,11 +62,11 @@ window.addEventListener('click', e => {
   }
 });
 
-// Load giveaway data for editing (modular version)
+// Load giveaway data for editing
 async function loadGiveawayData(giveawayId) {
   try {
     const docRef = doc(db, 'giveaways', giveawayId);
-    const docSnap = await getDocs(docRef);
+    const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -94,7 +94,7 @@ function formatDateForInput(date) {
   return date.toISOString().split('T')[0];
 }
 
-// Form submission (modular version)
+// Form submission
 document.getElementById('giveaway-form').addEventListener('submit', async e => {
   e.preventDefault();
 
@@ -131,7 +131,7 @@ document.getElementById('giveaway-form').addEventListener('submit', async e => {
   }
 });
 
-// Load giveaways for management (modular version)
+// Load giveaways for management
 async function loadGiveaways() {
   try {
     const q = query(
@@ -156,7 +156,7 @@ async function loadGiveaways() {
   }
 }
 
-// Display giveaways in admin panel (unchanged)
+// Display giveaways in admin panel
 function displayGiveaways(giveaways) {
   const giveawaysList = document.getElementById('giveaways-list');
   
@@ -194,7 +194,7 @@ function displayGiveaways(giveaways) {
   `).join('');
 }
 
-// Delete a giveaway (modular version)
+// Delete a giveaway
 async function deleteGiveaway(giveawayId) {
   if (!confirm('Are you sure you want to delete this giveaway? This action cannot be undone.')) {
     return;
@@ -210,7 +210,7 @@ async function deleteGiveaway(giveawayId) {
   }
 }
 
-// End a giveaway early (modular version)
+// End a giveaway early
 async function endGiveaway(giveawayId) {
   try {
     await updateDoc(doc(db, 'giveaways', giveawayId), {
@@ -226,7 +226,7 @@ async function endGiveaway(giveawayId) {
   }
 }
 
-// Load winners list for admin view (modular version)
+// Load winners list for admin view
 async function loadWinnersList() {
   try {
     const q = query(
@@ -251,7 +251,7 @@ async function loadWinnersList() {
   }
 }
 
-// Display winners in admin panel (unchanged)
+// Display winners in admin panel
 function displayWinnersList(winners) {
   const winnersContainer = document.getElementById('winners-list');
   
@@ -266,14 +266,13 @@ function displayWinnersList(winners) {
 
   winnersContainer.innerHTML = winners.map(winner => `
     <div class="winner-item">
-      <h3>Giveaway: ${winner.giveawayTitle || winner.giveawayId}</h3>
+      <h3>Giveaway: ${winner.giveawayTitle}</h3>
       <p>Drawn on: ${formatDate(winner.drawnAt?.toDate ? winner.drawnAt.toDate() : new Date(winner.drawnAt))}</p>
       <div class="winners-container">
         ${winner.winners.map(win => `
           <div class="winner-detail">
             <p><strong>Winner:</strong> ${win.name} (${win.username})</p>
             <p><strong>Email:</strong> ${win.email}</p>
-            <p><strong>Prize:</strong> ${win.prize}</p>
           </div>
         `).join('')}
       </div>
@@ -281,7 +280,7 @@ function displayWinnersList(winners) {
   `).join('');
 }
 
-// Load entries for admin view (modular version)
+// Load entries for admin view
 async function loadEntries() {
   try {
     const q = query(
@@ -307,7 +306,7 @@ async function loadEntries() {
   }
 }
 
-// Display entries in admin panel (unchanged)
+// Display entries in admin panel
 function displayEntries(entries) {
   const entriesContainer = document.getElementById('entries-list');
   
@@ -338,7 +337,7 @@ function displayEntries(entries) {
   `;
 }
 
-// Load analytics data (modular version)
+// Load analytics data
 async function loadAnalytics() {
   try {
     // Get total giveaways count
@@ -380,11 +379,11 @@ async function loadAnalytics() {
   }
 }
 
-// Pick winners functionality (unchanged)
+// Pick winners functionality
 function selectGiveawayForWinners(giveawayId) {
   document.getElementById('pick-giveaway').value = giveawayId;
   
-  getDocs(doc(db, 'giveaways', giveawayId))
+  getDoc(doc(db, 'giveaways', giveawayId))
     .then(docSnap => {
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -396,7 +395,7 @@ function selectGiveawayForWinners(giveawayId) {
     });
 }
 
-// Pick winners (modular version)
+// Pick winners
 async function pickWinners() {
   const giveawayId = document.getElementById('pick-giveaway').value;
   const count = parseInt(document.getElementById('winners-count').value);
@@ -407,7 +406,7 @@ async function pickWinners() {
   }
 
   try {
-    const giveawayDoc = await getDocs(doc(db, 'giveaways', giveawayId));
+    const giveawayDoc = await getDoc(doc(db, 'giveaways', giveawayId));
     if (!giveawayDoc.exists()) {
       alert('Giveaway not found.');
       return;
@@ -451,11 +450,9 @@ async function pickWinners() {
       giveawayId,
       giveawayTitle: giveaway.title,
       winners: winners.map(winner => ({
-        entryId: winner.id,
-        username: winner.username,
-        email: winner.email,
         name: winner.name,
-        prize: giveaway.prize
+        email: winner.email,
+        username: winner.username
       })),
       drawnAt: serverTimestamp()
     };
@@ -478,27 +475,18 @@ async function pickWinners() {
   }
 }
 
-// Export data (unchanged)
+// Export data
 function exportData() {
   alert('Export functionality would be implemented here. This would typically generate a CSV or Excel file of the data.');
 }
 
-// Format Date for display (unchanged)
+// Format Date for display
 function formatDate(date) {
   if (!date) return 'Date not available';
   
   const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(date).toLocaleDateString(undefined, options);
 }
-
-// Optional: filter/search hooks (unchanged)
-document.getElementById('status-filter')?.addEventListener('change', () => {
-  // Filter giveaways by status
-});
-
-document.getElementById('search-giveaways')?.addEventListener('input', () => {
-  // Search giveaways by title
-});
 
 // Initialize the admin panel with giveaways loaded by default
 document.addEventListener('DOMContentLoaded', () => {
