@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 });
 
-// Event Listeners (unchanged)
+// Event Listeners
 function setupEventListeners() {
   hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('active');
@@ -65,7 +65,7 @@ function setupEventListeners() {
   });
 }
 
-// Load Giveaways with Firebase (modular version)
+// Load Giveaways with Firebase
 async function loadGiveaways() {
   try {
     const q = query(
@@ -91,7 +91,7 @@ async function loadGiveaways() {
   }
 }
 
-// Display Giveaways (unchanged)
+// Display Giveaways
 function displayGiveaways(giveaways) {
   if (!giveaways || giveaways.length === 0) {
     giveawaysContainer.innerHTML = `
@@ -130,7 +130,7 @@ function displayGiveaways(giveaways) {
   });
 }
 
-// Load Winners with Firebase (modular version)
+// Load Winners with Firebase
 async function loadWinners() {
   try {
     const q = query(
@@ -143,13 +143,16 @@ async function loadWinners() {
     const winners = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      data.winners.forEach(winner => {
-        winners.push({
-          ...winner,
-          giveawayTitle: data.giveawayId,
-          endDate: data.drawnAt
+      // Check if winners array exists and has items
+      if (data.winners && data.winners.length > 0) {
+        data.winners.forEach(winner => {
+          winners.push({
+            ...winner,
+            giveawayTitle: data.giveawayTitle || "Unknown Giveaway",
+            endDate: data.drawnAt
+          });
         });
-      });
+      }
     });
     
     const recentWinners = winners.slice(0, 6);
@@ -164,7 +167,7 @@ async function loadWinners() {
   }
 }
 
-// Display Winners (unchanged)
+// Display Winners
 function displayWinners(winners) {
   if (!winners || winners.length === 0) {
     winnersContainer.innerHTML = `
@@ -180,20 +183,19 @@ function displayWinners(winners) {
       <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(winner.username)}&background=4361ee&color=fff"
            alt="${winner.username}" class="winner-avatar">
       <h3 class="winner-name">${winner.username}</h3>
-      <p class="winner-prize">${winner.prize || 'Awesome Prize'}</p>
       <p class="winner-date">Won on ${formatDate(winner.endDate?.toDate ? winner.endDate.toDate() : new Date(winner.endDate))}</p>
     </div>
   `).join('');
 }
 
-// Open Entry Modal (unchanged)
+// Open Entry Modal
 function openEntryModal(giveawayId) {
   document.getElementById('giveaway-id').value = giveawayId;
   entryForm.reset();
   entryModal.style.display = 'block';
 }
 
-// Handle Entry Submission with Firebase (modular version)
+// Handle Entry Submission with Firebase
 async function handleEntrySubmit(e) {
   e.preventDefault();
 
@@ -225,10 +227,10 @@ async function handleEntrySubmit(e) {
   }
 }
 
-// Format Date (unchanged)
+// Format Date
 function formatDate(date) {
   if (!date) return 'Date not available';
   
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return new Date(date).toLocaleDateString(undefined, options);
-    }
+                              }
