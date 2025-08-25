@@ -4,8 +4,87 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giveaway Hub - Win Amazing Prizes!</title>
-  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* CSS will be included here as requested */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f8f9fa; color: #333; line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .header { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .logo h1 { font-size: 1.8rem; font-weight: 700; }
+    .logo span { color: #ffde59; }
+    .nav-links { display: flex; list-style: none; }
+    .nav-links li { margin-left: 1.5rem; }
+    .nav-links a { color: white; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+    .nav-links a:hover { color: #ffde59; }
+    .admin-btn { background: #ffde59; color: #333; padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; }
+    .admin-btn:hover { background: #ffd32a; color: #333; }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; }
+    .hamburger span { width: 25px; height: 3px; background: white; margin: 2px 0; transition: 0.3s; }
+    .hero { padding: 4rem 0; background: linear-gradient(to right, #f8f9fa 50%, #eef2f6 50%); }
+    .hero .container { display: flex; align-items: center; justify-content: space-between; }
+    .hero-content { flex: 1; padding-right: 2rem; }
+    .hero-content h2 { font-size: 2.5rem; margin-bottom: 1rem; color: #2d3748; }
+    .hero-content p { font-size: 1.1rem; margin-bottom: 2rem; color: #4a5568; }
+    .btn { display: inline-block; background: #4361ee; color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
+    .btn:hover { background: #3a56d4; }
+    .hero-image { flex: 1; }
+    .hero-image img { width: 100%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .giveaways, .winners, .faq { padding: 4rem 0; }
+    .section-title { text-align: center; font-size: 2rem; margin-bottom: 2rem; color: #2d3748; }
+    .giveaways-grid, .winners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+    .giveaway-card, .winner-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .giveaway-card:hover { transform: translateY(-5px); }
+    .giveaway-image { width: 100%; height: 200px; object-fit: cover; }
+    .giveaway-content { padding: 1.5rem; }
+    .giveaway-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: #2d3748; }
+    .giveaway-prize { color: #4361ee; font-weight: 600; margin-bottom: 0.5rem; }
+    .giveaway-meta { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem; color: #718096; }
+    .status { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+    .status-active { background: #c6f6d5; color: #22543d; }
+    .status-upcoming { background: #fed7d7; color: #742a2a; }
+    .status-ended { background: #e9d8fd; color: #44337a; }
+    .giveaway-description { color: #4a5568; margin-bottom: 1rem; }
+    .winner-card { text-align: center; padding: 1.5rem; }
+    .winner-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1rem; }
+    .winner-name { font-size: 1.1rem; margin-bottom: 0.5rem; color: #2d3748; }
+    .winner-prize { color: #4361ee; font-weight: 600; margin-bottom: 0.5rem; }
+    .winner-date { color: #718096; font-size: 0.9rem; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: white; margin: 10% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px; position: relative; }
+    .close { position: absolute; top: 1rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { background: white; border-radius: 8px; margin-bottom: 1rem; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .faq-question { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .faq-question h3 { font-size: 1.1rem; color: #2d3748; }
+    .faq-answer { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.3s, padding 0.3s; }
+    .faq-item.active .faq-answer { padding: 0 1.5rem 1.5rem; max-height: 200px; }
+    .scroll-top { display: none; position: fixed; bottom: 2rem; right: 2rem; background: #4361ee; color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; z-index: 99; }
+    .footer { background: #2d3748; color: white; padding: 3rem 0 1rem; }
+    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+    .footer-section h3 { margin-bottom: 1rem; color: #ffde59; }
+    .footer-section ul { list-style: none; }
+    .footer-section ul li { margin-bottom: 0.5rem; }
+    .footer-section a { color: #cbd5e0; text-decoration: none; transition: color 0.3s; }
+    .footer-section a:hover { color: white; }
+    .social-icons { display: flex; gap: 1rem; }
+    .social-icons a { display: inline-block; width: 40px; height: 40px; background: #4a5568; border-radius: 50%; text-align: center; line-height: 40px; transition: background 0.3s; }
+    .social-icons a:hover { background: #4361ee; }
+    .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid #4a5568; }
+    .loading, .no-giveaways, .no-winners, .error-message { text-align: center; padding: 2rem; grid-column: 1 / -1; }
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: #6a11cb; flex-direction: column; padding: 1rem 0; }
+      .nav-links.active { display: flex; }
+      .nav-links li { margin: 0.5rem 1.5rem; }
+      .hamburger { display: flex; }
+      .hero .container { flex-direction: column; }
+      .hero-content { padding-right: 0; margin-bottom: 2rem; text-align: center; }
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -225,29 +304,257 @@
     
     console.log("Firebase initialized successfully!");
     
-    // Load main.js after Firebase is initialized
-    const script = document.createElement('script');
-    script.src = 'main.js';
-    document.body.appendChild(script);
+    // Initialize the application after Firebase is ready
+    initializeAppAfterFirebase();
   </script>
 
   <script>
-    // Scroll to top button
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-      scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
-    });
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    // Initialize the application after Firebase is ready
+    function initializeAppAfterFirebase() {
+      // DOM Elements
+      const giveawaysContainer = document.getElementById('giveaways-container');
+      const winnersContainer = document.getElementById('winners-container');
+      const entryModal = document.getElementById('entry-modal');
+      const entryForm = document.getElementById('entry-form');
+      const closeModal = document.querySelector('.close');
+      const hamburger = document.querySelector('.hamburger');
+      const navLinks = document.querySelector('.nav-links');
+      const faqItems = document.querySelectorAll('.faq-item');
 
-    // FAQ accordion
-    document.querySelectorAll('.faq-question').forEach(question => {
-      question.addEventListener('click', () => {
-        question.parentElement.classList.toggle('active');
+      // Get Firebase modules from global scope
+      const { 
+        collection, addDoc, getDocs, query, orderBy, where, limit, 
+        serverTimestamp, Timestamp 
+      } = window.firebaseModules;
+      const db = window.db;
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        loadGiveaways();
+        loadWinners();
+        setupEventListeners();
       });
-    });
+
+      // Event Listeners
+      function setupEventListeners() {
+        hamburger.addEventListener('click', () => {
+          navLinks.classList.toggle('active');
+        });
+
+        closeModal.addEventListener('click', () => {
+          entryModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+          if (e.target === entryModal) {
+            entryModal.style.display = 'none';
+          }
+        });
+
+        entryForm.addEventListener('submit', handleEntrySubmit);
+
+        faqItems.forEach(item => {
+          const question = item.querySelector('.faq-question');
+          question.addEventListener('click', () => {
+            item.classList.toggle('active');
+          });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
+              });
+              navLinks.classList.remove('active');
+            }
+          });
+        });
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', () => {
+          scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+        });
+        scrollTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // Load Giveaways with Firebase
+      async function loadGiveaways() {
+        try {
+          const q = query(
+            collection(db, 'giveaways'),
+            where('status', 'in', ['active', 'upcoming']),
+            orderBy('endDate', 'asc')
+          );
+          
+          const snapshot = await getDocs(q);
+          const giveaways = [];
+          snapshot.forEach(doc => {
+            giveaways.push({ id: doc.id, ...doc.data() });
+          });
+          
+          displayGiveaways(giveaways);
+        } catch (error) {
+          console.error('Error loading giveaways:', error);
+          giveawaysContainer.innerHTML = `
+            <div class="error-message">
+              <p>Failed to load giveaways. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Display Giveaways
+      function displayGiveaways(giveaways) {
+        if (!giveaways || giveaways.length === 0) {
+          giveawaysContainer.innerHTML = `
+            <div class="no-giveaways">
+              <p>No active giveaways at the moment. Check back soon!</p>
+            </div>
+          `;
+          return;
+        }
+
+        giveawaysContainer.innerHTML = giveaways.map(giveaway => `
+          <div class="giveaway-card">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1770&q=80" 
+                 alt="${giveaway.title}" class="giveaway-image">
+            <div class="giveaway-content">
+              <h3 class="giveaway-title">${giveaway.title}</h3>
+              <p class="giveaway-prize">Prize: ${giveaway.prize}</p>
+              <div class="giveaway-meta">
+                <span>Ends: ${formatDate(giveaway.endDate?.toDate ? giveaway.endDate.toDate() : new Date(giveaway.endDate))}</span>
+                <span class="status status-${giveaway.status}">${giveaway.status}</span>
+              </div>
+              <p class="giveaway-description">${giveaway.description}</p>
+              ${giveaway.status === 'active' ? 
+                `<button class="btn enter-btn" data-id="${giveaway.id}">Enter Now</button>` : 
+                `<button class="btn" disabled>${giveaway.status === 'upcoming' ? 'Coming Soon' : 'Ended'}</button>`
+              }
+            </div>
+          </div>
+        `).join('');
+
+        document.querySelectorAll('.enter-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const giveawayId = e.target.getAttribute('data-id');
+            openEntryModal(giveawayId);
+          });
+        });
+      }
+
+      // Load Winners with Firebase
+      async function loadWinners() {
+        try {
+          const q = query(
+            collection(db, 'winners'),
+            orderBy('drawnAt', 'desc'),
+            limit(6)
+          );
+          
+          const snapshot = await getDocs(q);
+          const winners = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            data.winners.forEach(winner => {
+              winners.push({
+                ...winner,
+                giveawayTitle: data.giveawayId,
+                endDate: data.drawnAt
+              });
+            });
+          });
+          
+          const recentWinners = winners.slice(0, 6);
+          displayWinners(recentWinners);
+        } catch (error) {
+          console.error('Error loading winners:', error);
+          winnersContainer.innerHTML = `
+            <div class="error-message">
+              <p>Failed to load winners. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Display Winners
+      function displayWinners(winners) {
+        if (!winners || winners.length === 0) {
+          winnersContainer.innerHTML = `
+            <div class="no-winners">
+              <p>No winners announced yet. Check back after our giveaways end!</p>
+            </div>
+          `;
+          return;
+        }
+
+        winnersContainer.innerHTML = winners.map(winner => `
+          <div class="winner-card">
+            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(winner.username)}&background=4361ee&color=fff"
+                 alt="${winner.username}" class="winner-avatar">
+            <h3 class="winner-name">${winner.username}</h3>
+            <p class="winner-prize">${winner.prize || 'Awesome Prize'}</p>
+            <p class="winner-date">Won on ${formatDate(winner.endDate?.toDate ? winner.endDate.toDate() : new Date(winner.endDate))}</p>
+          </div>
+        `).join('');
+      }
+
+      // Open Entry Modal
+      function openEntryModal(giveawayId) {
+        document.getElementById('giveaway-id').value = giveawayId;
+        entryForm.reset();
+        entryModal.style.display = 'block';
+      }
+
+      // Handle Entry Submission with Firebase
+      async function handleEntrySubmit(e) {
+        e.preventDefault();
+
+        const submitBtn = entryForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+
+        const entryData = {
+          giveawayId: document.getElementById('giveaway-id').value,
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          username: document.getElementById('username').value,
+          createdAt: serverTimestamp()
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        try {
+          await addDoc(collection(db, 'entries'), entryData);
+          alert('Entry submitted successfully! Good luck!');
+          entryModal.style.display = 'none';
+          entryForm.reset();
+        } catch (error) {
+          console.error('Error submitting entry:', error);
+          alert('Failed to submit entry. Please try again later.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+
+      // Format Date
+      function formatDate(date) {
+        if (!date) return 'Date not available';
+        
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(date).toLocaleDateString(undefined, options);
+      }
+    }
   </script>
-  <script src="main.js"></script>
 </body>
-            </html>
+</html>
