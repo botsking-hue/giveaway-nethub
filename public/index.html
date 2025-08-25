@@ -6,36 +6,6 @@
   <title>Giveaway Hub - Win Amazing Prizes!</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Firebase SDK as ES Module -->
-  <script type="module">
-    // Import the functions you need from the SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, orderBy, where, limit, serverTimestamp, query, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
-      authDomain: "giveaway-app-69b8f.firebaseapp.com",
-      projectId: "giveaway-app-69b8f",
-      storageBucket: "giveaway-app-69b8f.appspot.com",
-      messagingSenderId: "622768665857",
-      appId: "1:622768665857:web:fda9de620a830c42031700"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Make these available globally
-    window.db = db;
-    window.firebaseModules = {
-      collection, addDoc, getDocs, updateDoc, deleteDoc, doc, 
-      orderBy, where, limit, serverTimestamp, query, Timestamp
-    };
-    
-    console.log("Firebase initialized successfully!");
-  </script>
 </head>
 <body>
   <!-- Header -->
@@ -200,8 +170,67 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="main.js" defer></script>
+  <!-- Firebase SDK as ES Module -->
+  <script type="module">
+    // Import the functions you need from the SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      getDocs, 
+      getDoc,
+      updateDoc, 
+      deleteDoc, 
+      doc, 
+      query, 
+      orderBy, 
+      where, 
+      limit, 
+      serverTimestamp, 
+      Timestamp 
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvJqST6D_rUJhIMk7He9B2iQqsDnXTvNk",
+      authDomain: "giveaway-app-69b8f.firebaseapp.com",
+      projectId: "giveaway-app-69b8f",
+      storageBucket: "giveaway-app-69b8f.appspot.com",
+      messagingSenderId: "622768665857",
+      appId: "1:622768665857:web:fda9de620a830c42031700"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Make these available globally
+    window.db = db;
+    window.firebaseModules = {
+      collection, 
+      addDoc, 
+      getDocs, 
+      getDoc,
+      updateDoc, 
+      deleteDoc, 
+      doc, 
+      query, 
+      orderBy, 
+      where, 
+      limit, 
+      serverTimestamp, 
+      Timestamp
+    };
+    
+    console.log("Firebase initialized successfully!");
+    
+    // Load main.js after Firebase is initialized
+    const script = document.createElement('script');
+    script.src = 'main.js';
+    document.body.appendChild(script);
+  </script>
+
   <script>
     // Scroll to top button
     const scrollTopBtn = document.getElementById('scrollTopBtn');
@@ -220,4 +249,4 @@
     });
   </script>
 </body>
-  </html>
+            </html>
